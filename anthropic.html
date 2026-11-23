@@ -3,25 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anthropic AI Factory | AI Factory (PortCon)</title>
+  <title>Anthropic — What Breaks First in a Software Factory | AI Factory (PortCon)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --font-serif: "Newsreader", "Tiempos Headline", Georgia, "Times New Roman", serif;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Anthropic Light Theme */
+      --bg-light: #f4f3ee;
+      --ink-light: #1c1b1a;
+      --ink-light-muted: #454440;
+      --accent-light: #a3493d;
+      --rule-light: #c9c7c1;
+      --block-neutral: #d7d6d1;
+      --bar-grey: #8d8c88;
+      --bar-git: #474a4d;
+      --bar-blue: #466fb5;
+      --slate-box: #333a40;
+
+      /* Anthropic Dark Theme */
+      --bg-dark: #1f1e1c;
+      --ink-dark: #f5f4ef;
+      --ink-dark-muted: #c8c6c0;
+      --accent-dark: #f28a79;
+      --rule-dark: #7a7874;
+
+      /* Anthropic Full-Bleed Coral */
+      --bg-coral: #ff7e6b;
+      --ink-coral: #1a1918;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-      background: #1b1d24;
-      color: #111318;
-      padding: 84px 18px 40px;
+      font-family: var(--font-sans);
+      background: #141518;
+      color: var(--ink-light);
+      padding: 74px 20px 92px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      gap: 36px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body.single-mode {
+      justify-content: center;
       min-height: 100vh;
     }
+    body.single-mode .slide { display: none; }
+    body.single-mode .slide.active { display: flex; }
+
+    /* Shared Top Navigation (matches index.html & uber.html) */
     .top-nav {
       position: fixed;
       top: 14px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(17, 24, 39, 0.92);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       padding: 6px 12px;
@@ -29,44 +74,2713 @@
       align-items: center;
       gap: 8px;
       z-index: 1000;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
     }
     .top-nav a {
       text-decoration: none;
       font-size: 12px;
-      font-weight: 650;
+      font-weight: 600;
       padding: 5px 12px;
       border-radius: 999px;
       color: #e5e7eb;
     }
     .top-nav a.current { background: #ffffff; color: #111318; }
     .top-nav a:not(.current):hover { background: rgba(255, 255, 255, 0.12); }
+
+    /* Base 16:9 Slide Canvas */
     .slide {
       width: 100%;
-      max-width: 1040px;
-      background: #f7f6fb;
-      border-radius: 14px;
-      padding: 44px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      max-width: 1180px;
+      aspect-ratio: 16 / 9;
+      min-height: 620px;
+      border-radius: 10px;
+      padding: 56px 68px 36px;
+      box-shadow: 0 28px 72px rgba(0, 0, 0, 0.55);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
     }
-    .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #b45309; }
-    h1 { font-size: 36px; font-weight: 750; color: #0f1115; }
-    p { font-size: 15px; line-height: 1.5; color: #374151; }
+
+    .slide.theme-light {
+      background: var(--bg-light);
+      color: var(--ink-light);
+    }
+    .slide.theme-dark {
+      background: var(--bg-dark);
+      color: var(--ink-dark);
+    }
+    .slide.theme-coral {
+      background: var(--bg-coral);
+      color: var(--ink-coral);
+    }
+    .slide.theme-portcon {
+      background: #232528;
+      color: #ffffff;
+      padding: 0;
+    }
+
+    /* Typography */
+    .headline {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 3.6vw, 48px);
+      font-weight: 400;
+      line-height: 1.13;
+      letter-spacing: -0.015em;
+    }
+    .headline.lg {
+      font-size: clamp(40px, 4.7vw, 64px);
+      line-height: 1.12;
+    }
+    .headline.xl {
+      font-size: clamp(46px, 5.2vw, 72px);
+      line-height: 1.1;
+    }
+    .theme-light .em { color: var(--accent-light); font-style: italic; }
+    .theme-dark .em { color: var(--accent-dark); font-style: italic; }
+    .theme-coral .em { color: var(--ink-coral); font-style: italic; }
+    .theme-light .accent-up { color: var(--accent-light); font-style: normal; }
+    .theme-dark .accent-up { color: var(--accent-dark); font-style: normal; }
+
+    .eyebrow {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      margin-bottom: 18px;
+    }
+
+    /* Persistent Anthropic Footer */
+    .anth-footer {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      padding-top: 10px;
+      flex-shrink: 0;
+    }
+    .anth-footer-left {
+      display: flex;
+      align-items: baseline;
+      gap: 44px;
+      min-width: 0;
+    }
+    .anth-logo {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+    }
+    .anth-source {
+      font-size: 12px;
+      opacity: 0.78;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .anth-num {
+      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+
+    /* Slide Body Wrappers */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+    .slide-body.top-aligned {
+      justify-content: flex-start;
+      padding-top: 30px;
+    }
+
+    /* PortCon Title Slide (Slide 1) */
+    .portcon-main {
+      flex: 1;
+      position: relative;
+      padding: 64px 68px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      overflow: hidden;
+    }
+    .portcon-ribbon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 340px;
+      pointer-events: none;
+    }
+    .portcon-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 560px;
+    }
+    .portcon-tag {
+      font-size: 20px;
+      font-weight: 600;
+      color: #f3f4f6;
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+    .portcon-title {
+      font-family: var(--font-sans);
+      font-size: clamp(38px, 4.4vw, 56px);
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+    }
+    .portcon-handle {
+      margin-top: 38px;
+      font-size: 21px;
+      color: #d1d5db;
+      font-weight: 400;
+    }
+    .portcon-speaker {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-right: 46px;
+    }
+    .speaker-frame {
+      width: 240px;
+      height: 240px;
+      border-radius: 36px;
+      background: linear-gradient(145deg, #343844 0%, #262933 55%, #3d3247 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.35);
+      margin-bottom: 18px;
+    }
+    .speaker-monogram {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      color: #f5f4ef;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .speaker-badge {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+    .speaker-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.25;
+    }
+    .speaker-role {
+      font-size: 17px;
+      color: #d1d5db;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+    .portcon-bar {
+      background: #f5f6fa;
+      color: #272b38;
+      height: 54px;
+      padding: 0 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      position: relative;
+      z-index: 2;
+    }
+    .portcon-wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #3b4061;
+      letter-spacing: -0.02em;
+    }
+    .portcon-wordmark span { font-weight: 400; }
+
+    /* Asymmetric 2-Column Numbered List (Slides 2, 40, 53) */
+    .split-list {
+      display: grid;
+      grid-template-columns: 38% 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-top: 16px;
+    }
+    .num-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .num-row {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      padding: 26px 0;
+      border-top: 1px solid var(--rule-light);
+      align-items: baseline;
+    }
+    .num-idx {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: var(--accent-light);
+    }
+    .num-title {
+      font-family: var(--font-serif);
+      font-size: 27px;
+      line-height: 1.2;
+      color: var(--ink-light);
+    }
+    .num-sub {
+      font-family: var(--font-sans);
+      font-size: 17px;
+      color: var(--ink-light-muted);
+      margin-top: 7px;
+    }
+
+    /* Proportional Horizontal Comparison Bars (Slides 3, 17) */
+    .simple-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 52px;
+      margin-top: 16px;
+    }
+    .simple-bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .simple-bar-label {
+      font-size: 19px;
+      color: var(--ink-light-muted);
+    }
+    .simple-bar-track {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .simple-bar-rect {
+      height: 36px;
+      flex-shrink: 0;
+    }
+    .simple-bar-rect.grey { background: var(--bar-grey); }
+    .simple-bar-rect.terra { background: var(--accent-light); }
+    .simple-bar-val {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .simple-bar-val.terra { color: var(--accent-light); }
+
+    /* SDLC Segmented Comparison (Slide 5) */
+    .sdlc-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+    }
+    .sdlc-row-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-light-muted);
+      margin-bottom: 10px;
+    }
+    .sdlc-bar {
+      display: flex;
+      gap: 6px;
+      height: 60px;
+      align-items: stretch;
+    }
+    .sdlc-seg {
+      background: var(--block-neutral);
+      color: var(--ink-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 500;
+    }
+    .sdlc-seg.build {
+      background: var(--accent-light);
+      color: #ffffff;
+    }
+    .sdlc-seg.build-thin {
+      background: var(--accent-light);
+      position: relative;
+    }
+    .sdlc-seg.build-thin .under-label {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--accent-light);
+      font-size: 17px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* 5-Node Section Stepper (Slides 8, 9, 13, 18, 42) */
+    .stepper-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      width: 100%;
+      padding-top: 12px;
+    }
+    .stepper-line {
+      position: absolute;
+      top: 24px;
+      left: 10%;
+      right: 10%;
+      height: 1.5px;
+      background: var(--rule-dark);
+    }
+    .theme-light .stepper-line { background: var(--rule-light); }
+    .stepper-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .stepper-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #9d9b99;
+      margin-top: 5px;
+    }
+    .theme-light .stepper-dot {
+      width: 18px;
+      height: 18px;
+      background: var(--accent-light);
+      margin-top: 3px;
+    }
+    .stepper-node.active .stepper-dot {
+      width: 22px;
+      height: 22px;
+      background: var(--accent-dark);
+      margin-top: 1px;
+    }
+    .stepper-label {
+      font-size: 16px;
+      color: var(--ink-dark-muted);
+      text-align: center;
+    }
+    .theme-light .stepper-label {
+      color: var(--ink-light);
+      font-size: 17px;
+    }
+    .stepper-node.active .stepper-label {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    /* Multi-column Grids with Vertical Hairlines (Slides 11, 14, 19, 27, 29, 34, 35, 36) */
+    .cols-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cols-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cols-2.narrow {
+      max-width: 760px;
+    }
+    .col-item {
+      padding: 6px 34px;
+      border-left: 1px solid var(--rule-light);
+    }
+    .theme-dark .col-item { border-left-color: var(--rule-dark); }
+    .col-item:first-child { padding-left: 0; border-left: none; }
+
+    .kpi-num {
+      font-family: var(--font-serif);
+      font-size: clamp(46px, 5vw, 68px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .col-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(26px, 2.7vw, 34px);
+      line-height: 1.18;
+      margin-bottom: 14px;
+    }
+    .col-kicker {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      opacity: 0.86;
+    }
+    .col-step-num {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      color: var(--accent-dark);
+      margin-bottom: 14px;
+    }
+    .col-body {
+      font-size: 18px;
+      line-height: 1.42;
+      color: var(--ink-light-muted);
+    }
+    .theme-dark .col-body { color: var(--ink-dark); }
+
+    /* Code Card (Slide 12 REVIEW.md) */
+    .code-card {
+      background: #23272b;
+      color: #f4f5f6;
+      padding: 34px 40px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      line-height: 1.65;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .code-card .file { color: #b8bec5; }
+    .code-card .md-h { color: #e88a75; }
+
+    /* Pull Quotes (Slides 16, 39, 45, 50, 52) */
+    .quote-text {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 4.2vw, 54px);
+      line-height: 1.22;
+      letter-spacing: -0.012em;
+    }
+    .quote-text.italic-all { font-style: italic; }
+    .quote-attr {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 36px;
+      font-size: 19px;
+    }
+    .quote-rule {
+      width: 34px;
+      height: 2.5px;
+      flex-shrink: 0;
+    }
+    .theme-dark .quote-rule { background: var(--accent-dark); }
+    .theme-light .quote-rule { background: var(--accent-light); }
+
+    /* Comparison Tables (Slides 23, 24, 54) */
+    .cmp-table {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .cmp-header {
+      display: grid;
+      grid-template-columns: 1fr 64px 1fr;
+      padding-bottom: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    .cmp-header .left { color: var(--ink-light-muted); }
+    .cmp-header .right { color: var(--accent-light); }
+    .cmp-row {
+      display: grid;
+      grid-template-columns: 1fr 64px 1fr;
+      align-items: center;
+      padding: 22px 0;
+      border-top: 1px solid var(--rule-light);
+      font-size: 20px;
+    }
+    .cmp-row .left { color: var(--ink-light-muted); }
+    .cmp-row .right { color: var(--ink-light); font-weight: 500; }
+    .cmp-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: var(--accent-light);
+    }
+    .recap-row {
+      display: grid;
+      grid-template-columns: 19% 35% 6% 40%;
+      align-items: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--rule-light);
+      font-size: 19px;
+    }
+    .recap-stage { font-weight: 700; color: var(--ink-light); }
+    .recap-old { color: var(--ink-light-muted); }
+    .recap-new { color: var(--ink-light); }
+
+    /* Derived Log Diagram (Slide 26) */
+    .tier-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .tier-label.muted { color: var(--ink-light-muted); }
+    .tier-label.terra { color: var(--accent-light); }
+    .log-chain {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .log-box {
+      flex: 1;
+      background: #1f252b;
+      color: #f4f5f7;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      text-align: center;
+      padding: 22px 10px;
+    }
+    .derived-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .derived-box {
+      background: var(--accent-light);
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: center;
+      padding: 24px 12px;
+    }
+
+    /* Pipelines (Slide 37) */
+    .pipe-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pipe-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pipe-step {
+      flex: 1;
+      background: var(--block-neutral);
+      color: var(--ink-light);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.2;
+      padding: 0 10px;
+    }
+    .pipe-step.terra {
+      background: var(--accent-light);
+      color: #ffffff;
+    }
+
+    /* Superfans (Slide 38) */
+    .superfan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      align-items: end;
+    }
+    .superfan-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .superfan-dot {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--accent-light);
+    }
+    .superfan-box {
+      width: 100%;
+      background: var(--slate-box);
+      color: #f4f5f6;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      text-align: center;
+      padding: 28px 16px;
+    }
+
+    /* Waffle 93% + 84% (Slide 43) */
+    .waffle-layout {
+      display: grid;
+      grid-template-columns: 60% 1fr;
+      gap: 44px;
+      align-items: center;
+    }
+    .waffle-grid {
+      display: grid;
+      grid-template-columns: repeat(20, 1fr);
+      gap: 9px;
+      max-width: 560px;
+    }
+    .waffle-dot {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: var(--accent-light);
+    }
+    .waffle-dot.off { background: #c5c4c0; }
+    .waffle-right {
+      border-left: 1px solid var(--rule-light);
+      padding-left: 44px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    /* Red-Team 24/25 Unit Bar Chart (Slide 44) */
+    .unit-bars {
+      display: grid;
+      grid-template-columns: repeat(25, 1fr);
+      gap: 10px;
+      height: 112px;
+      margin: 26px 0 28px;
+    }
+    .unit-bar { background: var(--bg-coral); }
+    .unit-bar.safe {
+      background: transparent;
+      border: 2.5px solid var(--ink-dark);
+    }
+
+    /* 6-Stage File Review Loop (Slide 51) */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+    .stage-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .stage-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink-light);
+    }
+    .stage-box {
+      width: 100%;
+      height: 82px;
+      background: var(--slate-box);
+      color: #f4f5f6;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+    }
+
+    /* Grouped Horizontal Bar Charts (Slides 30, 31, 32) */
+    .svg-chart {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Bottom Deck Controls */
+    .deck-controls {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.94);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #f8fafc;
+      font-size: 12.5px;
+      z-index: 1000;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      max-width: calc(100vw - 24px);
+    }
+    .deck-controls button,
+    .deck-controls select {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+    .deck-controls select {
+      max-width: 210px;
+      padding-right: 22px;
+    }
+    .deck-controls select option {
+      background: #181a20;
+      color: #f8fafc;
+    }
+    .deck-controls button:hover,
+    .deck-controls select:hover { background: rgba(255, 255, 255, 0.22); }
+    #counter {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 960px) {
+      .slide {
+        aspect-ratio: auto;
+        min-height: 520px;
+        padding: 36px 28px 24px;
+      }
+      .portcon-main { flex-direction: column; align-items: flex-start; padding: 36px 28px; }
+      .portcon-speaker { margin-right: 0; }
+      .split-list, .cols-3, .cols-2, .waffle-layout, .derived-grid, .superfan-grid, .stage-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .col-item, .waffle-right {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--rule-light);
+        padding-top: 16px;
+      }
+      .theme-dark .col-item { border-top-color: var(--rule-dark); }
+      .col-item:first-child { border-top: none; padding-top: 0; }
+      .cmp-header, .cmp-row, .recap-row { grid-template-columns: 1fr; gap: 6px; }
+      .cmp-arrow { display: none; }
+      .anth-source { display: none; }
+      .deck-controls select { display: none; }
+    }
   </style>
 </head>
-<body>
+<body class="single-mode">
+
   <nav class="top-nav" aria-label="AI Factory pages">
     <a href="index.html">AI Factory</a>
     <a href="uber.html">Uber</a>
     <a href="anthropic.html" class="current">Anthropic</a>
   </nav>
 
-  <section class="slide">
-    <div class="kicker">AI Factory · PortCon Solution · /anthropic.html</div>
-    <h1>Anthropic: The AI Factory</h1>
-    <p>Dedicated page under the root for Anthropic AI Factory slides and notes.</p>
+  <!-- ==================== 1. TITLE SLIDE (IMG_9250) ==================== -->
+  <section class="slide theme-portcon active" id="slide-1" data-label="1 · Title: What breaks first">
+    <div class="portcon-main">
+      <svg class="portcon-ribbon" viewBox="0 0 340 620" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="rib1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e5e8f8" />
+            <stop offset="100%" stop-color="#c3c5e6" />
+          </linearGradient>
+          <linearGradient id="rib2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#d4d4ec" />
+            <stop offset="100%" stop-color="#b4a3d8" />
+          </linearGradient>
+          <linearGradient id="rib3" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e299e6" />
+            <stop offset="100%" stop-color="#c574e0" />
+          </linearGradient>
+          <linearGradient id="rib4" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3c3f4c" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#232528" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path d="M125 0 L340 0 L340 165 L145 92 Q125 84 125 60 Z" fill="url(#rib1)" />
+        <path d="M125 140 Q125 108 158 120 L340 185 L340 365 L155 292 Q125 280 125 245 Z" fill="url(#rib2)" />
+        <path d="M140 285 L340 360 L340 438 L138 358 Z" fill="url(#rib3)" />
+        <path d="M135 358 L340 438 L340 620 L135 620 Z" fill="url(#rib4)" />
+      </svg>
+
+      <div class="portcon-copy">
+        <div class="portcon-tag">PortCon 2026</div>
+        <h1 class="portcon-title">What breaks first in<br />a software factory</h1>
+        <div class="portcon-handle"><a href="https://x.com/TalMagdish" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.35);">x.com/TalMagdish</a></div>
+      </div>
+
+      <div class="portcon-speaker">
+        <div class="speaker-frame" aria-label="Tal Magdish speaker card">
+          <div class="speaker-monogram">TM</div>
+          <div class="speaker-badge">Anthropic · PortCon</div>
+        </div>
+        <div class="speaker-name">Tal Magdish</div>
+        <div class="speaker-role">Member of Technical<br />Staff, Anthropic</div>
+      </div>
+    </div>
+    <div class="portcon-bar">
+      <div class="portcon-wordmark">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M2 2 H14 V14 L2 2 Z" fill="#464b70" />
+          <path d="M2 7 L14 19 V22 H2 V7 Z" fill="#464b70" />
+          <rect x="17" y="2" width="5" height="20" rx="1" fill="#464b70" />
+        </svg>
+        port<span>con</span>
+      </div>
+      <div>AI Software Factory Summit</div>
+    </div>
   </section>
+
+  <!-- ==================== 2. AGENDA (IMG_9251 · Slide 2) ==================== -->
+  <section class="slide theme-light" id="slide-2" data-label="2 · What we'll cover today">
+    <div class="slide-body top-aligned">
+      <div class="split-list">
+        <h1 class="headline">What we&rsquo;ll<br /><span class="em">cover today.</span></h1>
+        <div class="num-list">
+          <div class="num-row">
+            <div class="num-idx">1</div>
+            <div>
+              <div class="num-title">Why the factory breaks</div>
+              <div class="num-sub">What agents change about the process</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">2</div>
+            <div>
+              <div class="num-title">Five places ours broke</div>
+              <div class="num-sub">With a deep dive on source control</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">3</div>
+            <div>
+              <div class="num-title">What to do on Monday</div>
+              <div class="num-sub">Three things to try</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">2</span>
+    </div>
+  </section>
+
+  <!-- ==================== 3. FORD (IMG_9252 · Slide 3) ==================== -->
+  <section class="slide theme-light" id="slide-3" data-label="3 · Ford moved the car to the workers">
+    <h1 class="headline">Ford moved the car to the workers.</h1>
+    <div class="slide-body">
+      <div class="simple-bars">
+        <div class="simple-bar-group">
+          <div class="simple-bar-label">The car stands still</div>
+          <div class="simple-bar-track">
+            <div class="simple-bar-rect grey" style="width: 68%;"></div>
+            <div class="simple-bar-val">12 h 28 min</div>
+          </div>
+        </div>
+        <div class="simple-bar-group">
+          <div class="simple-bar-label">The car rolls past</div>
+          <div class="simple-bar-track">
+            <div class="simple-bar-rect terra" style="width: 8.5%;"></div>
+            <div class="simple-bar-val terra">1 h 33 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: Henry Ford, My Life and Work, 1922. Labor per chassis, bars to scale.</span>
+      </div>
+      <span class="anth-num">3</span>
+    </div>
+  </section>
+
+  <!-- ==================== 4. GAINS FROM PROCESS (IMG_9253 · Slide 4) ==================== -->
+  <section class="slide theme-dark" id="slide-4" data-label="4 · Changing the process around the agent">
+    <div class="slide-body">
+      <h1 class="headline lg">The gains come from changing<br /><span class="em">the process around the agent.</span></h1>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">4</span>
+    </div>
+  </section>
+
+  <!-- ==================== 5. BUILD GOT FASTER (IMG_9254 · Slide 5) ==================== -->
+  <section class="slide theme-light" id="slide-5" data-label="5 · Build got faster">
+    <h1 class="headline">Build got faster and the other stages<br /><span class="em">stayed the same.</span></h1>
+    <div class="slide-body">
+      <div class="sdlc-rows">
+        <div>
+          <div class="sdlc-row-label">BEFORE</div>
+          <div class="sdlc-bar" style="width: 100%;">
+            <div class="sdlc-seg" style="width: 11.5%;">Plan</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Design</div>
+            <div class="sdlc-seg build" style="width: 40%;">Build</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Test</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Deploy</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Maintain</div>
+          </div>
+        </div>
+        <div>
+          <div class="sdlc-row-label">NOW</div>
+          <div class="sdlc-bar" style="width: 100%;">
+            <div class="sdlc-seg" style="width: 11.5%;">Plan</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Design</div>
+            <div class="sdlc-seg build-thin" style="width: 2.6%;">
+              <span class="under-label">Build</span>
+            </div>
+            <div class="sdlc-seg" style="width: 11.5%;">Test</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Deploy</div>
+            <div class="sdlc-seg" style="width: 11.5%;">Maintain</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;The AI-native SDLC playbook,&rdquo; claude.com, Aug 2026. Widths are illustrative.</span>
+      </div>
+      <span class="anth-num">5</span>
+    </div>
+  </section>
+
+  <!-- ==================== 6. DAILY MERGES 30,401 (IMG_9255 · Slide 6) ==================== -->
+  <section class="slide theme-light" id="slide-6" data-label="6 · Daily merges: 2,500 to 30,401">
+    <h1 class="headline">Daily merges went from 2,500 to <span class="em">a peak of 30,401.</span></h1>
+    <div class="slide-body">
+      <svg id="chart-daily-merges" class="svg-chart" viewBox="0 0 1040 400" role="img" aria-label="Daily merges stacked bar chart from January to September peaking at 30,401 on Sep 9"></svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">6</span>
+    </div>
+  </section>
+
+  <!-- ==================== 7. WHATEVER ASSUMES (IMG_9256 · Slide 7) ==================== -->
+  <section class="slide theme-dark" id="slide-7" data-label="7 · Whatever assumes a person's pace">
+    <div class="slide-body">
+      <h1 class="headline xl">Whatever assumes<br /><span class="em">a person&rsquo;s pace</span> breaks first.</h1>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">7</span>
+    </div>
+  </section>
+
+  <!-- ==================== 8. FIVE PLACES (IMG_9257 · Slide 8) ==================== -->
+  <section class="slide theme-light" id="slide-8" data-label="8 · Ours broke in five places">
+    <h1 class="headline">Ours broke in <span class="em">five places.</span></h1>
+    <div class="slide-body">
+      <div class="stepper-wrap">
+        <div class="stepper-line"></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Review</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">CI</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Source control</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Approvals</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Boundaries</div></div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">The grouping and the order are mine.</span>
+      </div>
+      <span class="anth-num">8</span>
+    </div>
+  </section>
+
+  <!-- ==================== 9. ASSUMPTION 1: REVIEW (IMG_9258 · Slide 9) ==================== -->
+  <section class="slide theme-dark" id="slide-9" data-label="9 · [Review] A person reads every line">
+    <div class="slide-body" style="justify-content: space-between; padding: 36px 0 28px;">
+      <div>
+        <div class="eyebrow">THE ASSUMPTION</div>
+        <h1 class="headline lg">A person reads every line.</h1>
+      </div>
+      <div class="stepper-wrap">
+        <div class="stepper-line"></div>
+        <div class="stepper-node active"><div class="stepper-dot"></div><div class="stepper-label">Review</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">CI</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Source control</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Approvals</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Boundaries</div></div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">9</span>
+    </div>
+  </section>
+
+  <!-- ==================== 10. TIER BY TIER (IMG_9260 · Slide 11) ==================== -->
+  <section class="slide theme-dark" id="slide-10" data-label="11 · We decide tier by tier">
+    <h1 class="headline">We decide <span class="em">tier by tier</span> where a person approves.</h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="col-heading">Lower-risk code</div>
+          <div class="col-kicker">AGENTS APPROVE</div>
+          <div class="col-body">Every approval is logged<br />with its reasoning</div>
+        </div>
+        <div class="col-item">
+          <div class="col-heading">A sample of that</div>
+          <div class="col-kicker">PEOPLE RE-CHECK</div>
+          <div class="col-body">Weighted by risk</div>
+        </div>
+        <div class="col-item">
+          <div class="col-heading accent-up">Critical code</div>
+          <div class="col-kicker accent-up">PEOPLE APPROVE</div>
+          <div class="col-body">Entire codebases</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How Anthropic secures its AI-native software development lifecycle,&rdquo; claude.com, July 2026</span>
+      </div>
+      <span class="anth-num">11</span>
+    </div>
+  </section>
+
+  <!-- ==================== 11. REVIEW.MD (IMG_9261 · Slide 12) ==================== -->
+  <section class="slide theme-light" id="slide-11" data-label="12 · REVIEW.md in the repo">
+    <h1 class="headline">The review policy is <span class="em">a file in the repo.</span></h1>
+    <div class="slide-body">
+      <div class="code-card"><span class="file">REVIEW.md</span>
+
+<span class="md-h">## Passes</span>
+- Bugs: logic errors, broken edge cases, subtle regressions
+- Security: injection risks, authentication gaps, PII in logs
+- Compliance: the change matches spec.md, plan.md
+
+<span class="md-h">## What Important means here</span>
+Reserve Important for findings that would break behavior, leak data
+or breach a policy.
+
+<span class="md-h">## Cap the nits</span>
+Report at most five nits per review.</div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;The AI-native SDLC playbook,&rdquo; claude.com, Aug 2026. Example trimmed.</span>
+      </div>
+      <span class="anth-num">12</span>
+    </div>
+  </section>
+
+  <!-- ==================== 12. ASSUMPTION 2: CI (IMG_9262 · Slide 13) ==================== -->
+  <section class="slide theme-dark" id="slide-12" data-label="13 · [CI] Load grows with headcount">
+    <div class="slide-body" style="justify-content: space-between; padding: 36px 0 28px;">
+      <div>
+        <div class="eyebrow">THE ASSUMPTION</div>
+        <h1 class="headline lg">Load grows with headcount.</h1>
+      </div>
+      <div class="stepper-wrap">
+        <div class="stepper-line"></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Review</div></div>
+        <div class="stepper-node active"><div class="stepper-dot"></div><div class="stepper-label">CI</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Source control</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Approvals</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Boundaries</div></div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">13</span>
+    </div>
+  </section>
+
+  <!-- ==================== 13. CI JOBS GREW 25X (IMG_9263 · Slide 14) ==================== -->
+  <section class="slide theme-light" id="slide-13" data-label="14 · CI jobs grew 25x in six months">
+    <h1 class="headline">CI jobs grew <span class="em">25x in six months.</span></h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="kpi-num">8x</div>
+          <div class="col-body">code shipped per<br />engineer per quarter,<br />against 2021 to 2025</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num">10x</div>
+          <div class="col-body">as many tests across the<br />codebase</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num accent-up">25x</div>
+          <div class="col-body">as many CI jobs</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Agentic coding is straining CI,&rdquo; claude.com, Sept 2026</span>
+      </div>
+      <span class="anth-num">14</span>
+    </div>
+  </section>
+
+  <!-- ==================== 14. SACHIN QUOTE (IMG_9265 · Slide 16) ==================== -->
+  <section class="slide theme-dark" id="slide-14" data-label="16 · Another piece of infrastructure">
+    <div class="slide-body">
+      <div class="quote-text">&ldquo;No one wanted to own <span class="em">another piece<br />of infrastructure.&rdquo;</span></div>
+      <div class="quote-attr">
+        <span class="quote-rule"></span>
+        <span>Sachin Malhotra, Anthropic</span>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Agentic coding is straining CI,&rdquo; claude.com, Sept 2026</span>
+      </div>
+      <span class="anth-num">16</span>
+    </div>
+  </section>
+
+  <!-- ==================== 15. REBUILD 3 WEEKS (IMG_9266 · Slide 17) ==================== -->
+  <section class="slide theme-light" id="slide-15" data-label="17 · The rebuild took three weeks">
+    <h1 class="headline">The rebuild took one engineer <span class="em">three weeks.</span></h1>
+    <div class="slide-body">
+      <div class="simple-bars">
+        <div class="simple-bar-group">
+          <div class="simple-bar-label">A year earlier</div>
+          <div class="simple-bar-track">
+            <div class="simple-bar-rect grey" style="width: 56%;"></div>
+            <div class="simple-bar-val">closer to a quarter</div>
+          </div>
+        </div>
+        <div class="simple-bar-group">
+          <div class="simple-bar-label">This time</div>
+          <div class="simple-bar-track">
+            <div class="simple-bar-rect terra" style="width: 13%;"></div>
+            <div class="simple-bar-val terra">three weeks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Agentic coding is straining CI,&rdquo; claude.com, Sept 2026</span>
+      </div>
+      <span class="anth-num">17</span>
+    </div>
+  </section>
+
+  <!-- ==================== 16. ASSUMPTION 3: SOURCE CONTROL (IMG_9267 · Slide 18) ==================== -->
+  <section class="slide theme-dark" id="slide-16" data-label="18 · [Source control] Clones &amp; waits a turn">
+    <div class="slide-body" style="justify-content: space-between; padding: 36px 0 28px;">
+      <div>
+        <div class="eyebrow">THE ASSUMPTION</div>
+        <h1 class="headline lg">A developer clones, works offline<br />and waits a turn to merge.</h1>
+      </div>
+      <div class="stepper-wrap">
+        <div class="stepper-line"></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Review</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">CI</div></div>
+        <div class="stepper-node active"><div class="stepper-dot"></div><div class="stepper-label">Source control</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Approvals</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Boundaries</div></div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">18</span>
+    </div>
+  </section>
+
+  <!-- ==================== 17. 25M CHECKOUTS (IMG_9268 · Slide 19) ==================== -->
+  <section class="slide theme-light" id="slide-17" data-label="19 · 25 million checkouts a day">
+    <h1 class="headline">CI alone checks out code about<br /><span class="em">25 million times a day.</span></h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="kpi-num">~100 GB</div>
+          <div class="col-body">of history on the main<br />branch</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num">Hundreds</div>
+          <div class="col-body">of git mirrors at the peak</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num accent-up">7 people</div>
+          <div class="col-body">built the replacement<br />and migrated in five<br />months</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">19</span>
+    </div>
+  </section>
+
+  <!-- ==================== 18. 600 PB A DAY (IMG_9269 · Slide 20) ==================== -->
+  <section class="slide theme-dark" id="slide-18" data-label="20 · Over 600 PB a day">
+    <div class="slide-body">
+      <h1 class="headline xl">Fetched naively, that would be<br /><span class="em">over 600 PB a day.</span></h1>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">20</span>
+    </div>
+  </section>
+
+  <!-- ==================== 19. USUAL WAYS TO SCALE GIT (IMG_9270 · Slide 21) ==================== -->
+  <section class="slide theme-light" id="slide-19" data-label="21 · The usual ways to scale git">
+    <h1 class="headline">We started with <span class="em">the usual ways</span> to scale git.</h1>
+    <div class="slide-body">
+      <svg class="svg-chart" viewBox="0 0 1040 340" role="img" aria-label="Git scaling architecture diagram with Jobs, Per cluster caches and mirrors, Upstream, Blob storage, and Node seed">
+        <defs>
+          <marker id="arr-t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#9e4438" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+          <marker id="arr-d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#333230" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+
+        <!-- Jobs container -->
+        <rect x="20" y="34" width="246" height="270" rx="10" fill="#e5e4e0" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="40" y="64" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Jobs</text>
+        <rect x="40" y="82" width="76" height="38" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="53" y="106" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#1c1b1a">CI jobs</text>
+        <rect x="40" y="134" width="206" height="38" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="53" y="158" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#1c1b1a">Developer environments</text>
+        <rect x="40" y="186" width="154" height="38" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="53" y="210" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#1c1b1a">Agent sandboxes</text>
+        <rect x="40" y="238" width="132" height="38" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="53" y="262" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#1c1b1a">Research jobs</text>
+
+        <!-- Per cluster dashed container -->
+        <rect x="296" y="30" width="564" height="122" rx="10" fill="none" stroke="#4a4946" stroke-width="1.5" stroke-dasharray="6 5" />
+        <text x="316" y="58" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Per cluster</text>
+
+        <rect x="316" y="74" width="150" height="58" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="334" y="108" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Packfile cache</text>
+
+        <rect x="504" y="74" width="150" height="58" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="522" y="108" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Mirror replicas</text>
+
+        <rect x="692" y="74" width="150" height="58" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="710" y="108" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Mirror primaries</text>
+
+        <!-- Upstream -->
+        <rect x="886" y="74" width="142" height="58" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="904" y="108" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Upstream</text>
+
+        <!-- Node seed & Blob storage -->
+        <rect x="316" y="232" width="150" height="72" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="334" y="273" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Node seed</text>
+
+        <rect x="504" y="232" width="150" height="72" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="522" y="263" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">Blob storage</text>
+        <text x="522" y="284" font-family="Inter, sans-serif" font-size="13.5" fill="#454440">Seed snapshot</text>
+
+        <!-- Terracotta arrows -->
+        <line x1="266" y1="103" x2="310" y2="103" stroke="#9e4438" stroke-width="1.7" marker-end="url(#arr-t)" />
+        <line x1="466" y1="103" x2="498" y2="103" stroke="#9e4438" stroke-width="1.7" marker-end="url(#arr-t)" />
+        <line x1="579" y1="132" x2="579" y2="226" stroke="#9e4438" stroke-width="1.7" marker-end="url(#arr-t)" />
+        <line x1="504" y1="268" x2="472" y2="268" stroke="#9e4438" stroke-width="1.7" marker-end="url(#arr-t)" />
+        <line x1="316" y1="268" x2="272" y2="268" stroke="#9e4438" stroke-width="1.7" marker-end="url(#arr-t)" />
+
+        <!-- Charcoal arrows -->
+        <line x1="654" y1="103" x2="686" y2="103" stroke="#333230" stroke-width="1.7" marker-end="url(#arr-d)" />
+        <line x1="842" y1="103" x2="880" y2="103" stroke="#333230" stroke-width="1.7" marker-end="url(#arr-d)" />
+      </svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">21</span>
+    </div>
+  </section>
+
+  <!-- ==================== 20. ALWAYS-ONLINE CLIENTS (IMG_9271 · Slide 23) ==================== -->
+  <section class="slide theme-light" id="slide-20" data-label="23 · Always-online clients change the design">
+    <h1 class="headline">Always-online clients <span class="em">change the design.</span></h1>
+    <div class="slide-body">
+      <div class="cmp-table">
+        <div class="cmp-header">
+          <div class="left">GIT</div>
+          <div></div>
+          <div class="right">SCION</div>
+        </div>
+        <div class="cmp-row">
+          <div class="left">Clients work offline</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">Clients are always online</div>
+        </div>
+        <div class="cmp-row">
+          <div class="left">Every clone is a full repository</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">The server answers, the client caches</div>
+        </div>
+        <div class="cmp-row">
+          <div class="left">Commit locally, then push</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">Commits happen on the server</div>
+        </div>
+        <div class="cmp-row">
+          <div class="left">Check out the repo to ask a question</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">Ask an API, skip the checkout</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">23</span>
+    </div>
+  </section>
+
+  <!-- ==================== 21. SCALE HORIZONTALLY (IMG_9272 · Slide 24) ==================== -->
+  <section class="slide theme-light" id="slide-21" data-label="24 · Everything has to scale horizontally">
+    <h1 class="headline">Everything has to <span class="em">scale horizontally.</span></h1>
+    <div class="slide-body">
+      <div class="cmp-table">
+        <div class="cmp-header">
+          <div class="left">GIT</div>
+          <div></div>
+          <div class="right">SCION</div>
+        </div>
+        <div class="cmp-row" style="padding: 30px 0;">
+          <div class="left">Mirrors hold the whole repo</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">No full copy exists anywhere</div>
+        </div>
+        <div class="cmp-row" style="padding: 30px 0;">
+          <div class="left">Start from a working copy</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">The working copy is optional</div>
+        </div>
+        <div class="cmp-row" style="padding: 30px 0;">
+          <div class="left">Branches and tags everywhere</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="right">Refs for main and releases</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">24</span>
+    </div>
+  </section>
+
+  <!-- ==================== 22. CHANGESET SCHEMA (IMG_9273 · Slide 25) ==================== -->
+  <section class="slide theme-light" id="slide-22" data-label="25 · A changeset stores only what changed">
+    <div class="slide-body" style="padding-top: 4px;">
+      <svg class="svg-chart" viewBox="0 0 1050 495" role="img" aria-label="Scion changeset data model in Spanner metadata and Cloud Storage file contents">
+        <defs>
+          <marker id="cs-t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#9e4438" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+          <marker id="cs-d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#2c2b29" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+
+        <!-- Left serif headline -->
+        <text x="0" y="70" font-family="Newsreader, Georgia, serif" font-size="44" fill="#1c1b1a">A changeset</text>
+        <text x="0" y="122" font-family="Newsreader, Georgia, serif" font-size="44" fill="#1c1b1a">stores <tspan font-style="italic" fill="#a3493d">only</tspan></text>
+        <text x="0" y="174" font-family="Newsreader, Georgia, serif" font-size="44" font-style="italic" fill="#a3493d">what changed.</text>
+
+        <!-- Top tier heading -->
+        <text x="308" y="34" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Spanner: metadata</text>
+
+        <!-- Main Changeset Card -->
+        <rect x="308" y="48" width="448" height="236" rx="8" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.5" />
+        <path d="M316 48 H748 Q756 48 756 56 V79 H308 V56 Q308 48 316 48 Z" fill="#dcdbd7" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="322" y="69" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="#1c1b1a">Changeset</text>
+        <text x="742" y="69" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c1b1a">id <tspan fill="#a3493d">9f2c&hellip;7ab0</tspan></text>
+
+        <!-- Card rows -->
+        <g font-family="JetBrains Mono, monospace" font-size="10.8">
+          <text x="322" y="96" fill="#2c2b29">author</text>
+          <text x="424" y="96" fill="#2c2b29">Claude &lt;noreply@anthropic.com&gt;</text>
+          <line x1="308" y1="104" x2="756" y2="104" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="118" fill="#2c2b29">author_date</text>
+          <text x="424" y="118" fill="#2c2b29">2026-09-15T01:25:09+00:00</text>
+          <line x1="308" y1="126" x2="756" y2="126" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="140" fill="#2c2b29">committer</text>
+          <text x="424" y="140" fill="#2c2b29">Scion &lt;noreply+scion@anthropic.com&gt;</text>
+          <text x="742" y="140" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#454440">Optional</text>
+          <line x1="308" y1="148" x2="756" y2="148" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="162" fill="#2c2b29">committer_date</text>
+          <text x="424" y="162" fill="#2c2b29">2026-09-15T01:31:40+00:00</text>
+          <text x="742" y="162" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#454440">Optional</text>
+          <line x1="308" y1="170" x2="756" y2="170" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="184" fill="#2c2b29">message</text>
+          <text x="424" y="184" fill="#2c2b29">scion-cache: serve blobs from the memory tier</text>
+          <line x1="308" y1="192" x2="756" y2="192" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="206" fill="#2c2b29">parents</text>
+          <text x="424" y="206" fill="#a3493d">d41c&hellip;88e2</text>
+          <line x1="308" y1="214" x2="756" y2="214" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="228" fill="#2c2b29">signature</text>
+          <text x="424" y="228" fill="#2c2b29">&ndash;</text>
+          <text x="742" y="228" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#454440">Optional</text>
+          <line x1="308" y1="236" x2="756" y2="236" stroke="#c8c7c2" stroke-width="1" />
+
+          <text x="322" y="251" fill="#2c2b29">file_changes</text>
+          <text x="424" y="251" fill="#2c2b29">docs/guide.md</text>
+          <text x="524" y="251" fill="#a3493d">3e1f&hellip;a2c4</text>
+          <text x="742" y="251" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#454440">Regular file</text>
+
+          <text x="424" y="265" fill="#2c2b29">src/legacy.rs</text>
+          <text x="524" y="265" fill="#454440">Deleted</text>
+
+          <text x="424" y="279" fill="#2c2b29">tools/build.sh</text>
+          <text x="524" y="279" fill="#a3493d">9b07&hellip;5d18</text>
+          <text x="742" y="279" text-anchor="end" font-family="Inter, sans-serif" font-size="11" fill="#454440">Executable</text>
+        </g>
+
+        <!-- Parent chain on right -->
+        <line x1="756" y1="202" x2="794" y2="202" stroke="#2c2b29" stroke-width="1.5" marker-end="url(#cs-d)" />
+        <rect x="800" y="185" width="174" height="34" rx="7" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="812" y="206" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#1c1b1a">Changeset</text>
+        <text x="890" y="206" font-family="JetBrains Mono, monospace" font-size="11" fill="#1c1b1a">id <tspan fill="#a3493d">d41c&hellip;88e2</tspan></text>
+        <line x1="974" y1="202" x2="1012" y2="202" stroke="#2c2b29" stroke-width="1.5" marker-end="url(#cs-d)" />
+        <text x="1020" y="206" font-family="Inter, sans-serif" font-size="14" fill="#454440">&hellip;</text>
+
+        <!-- Derived trees -->
+        <line x1="696" y1="284" x2="696" y2="330" stroke="#2c2b29" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#cs-d)" />
+        <text x="708" y="314" font-family="Inter, sans-serif" font-size="12" fill="#2c2b29">Derived by the server, not stored in the changeset</text>
+
+        <rect x="636" y="335" width="144" height="32" rx="6" fill="none" stroke="#3b3a38" stroke-width="1.4" stroke-dasharray="5 4" />
+        <text x="647" y="355" font-family="Inter, sans-serif" font-size="11.5" font-weight="500" fill="#1c1b1a">Root tree <tspan font-family="JetBrains Mono, monospace" font-size="10.8" fill="#a3493d">5c0e&hellip;d1a9</tspan></text>
+
+        <line x1="780" y1="351" x2="816" y2="351" stroke="#2c2b29" stroke-width="1.4" marker-end="url(#cs-d)" />
+
+        <rect x="822" y="335" width="152" height="32" rx="6" fill="none" stroke="#3b3a38" stroke-width="1.4" stroke-dasharray="5 4" />
+        <text x="833" y="355" font-family="Inter, sans-serif" font-size="11.5" font-weight="500" fill="#1c1b1a">Tree src/ <tspan font-family="JetBrains Mono, monospace" font-size="10.8" fill="#a3493d">77f0&hellip;e9b4</tspan></text>
+
+        <!-- Grey horizontal tier divider band -->
+        <rect x="292" y="395" width="750" height="11" fill="#d7d6d2" />
+
+        <!-- Cloud Storage tier -->
+        <text x="308" y="432" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Cloud Storage: file contents</text>
+        <text x="308" y="458" font-family="Inter, sans-serif" font-size="12.5" fill="#454440">Immutable, compressed</text>
+        <text x="308" y="474" font-family="Inter, sans-serif" font-size="12.5" fill="#454440">and deduplicated by hash</text>
+
+        <rect x="494" y="446" width="112" height="36" rx="7" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="550" y="468" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c1b1a">9b07&hellip;5d18</text>
+
+        <rect x="664" y="446" width="112" height="36" rx="7" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="720" y="468" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c1b1a">3e1f&hellip;a2c4</text>
+
+        <rect x="840" y="446" width="112" height="36" rx="7" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="896" y="468" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c1b1a">c5d2&hellip;0e77</text>
+
+        <text x="1020" y="468" font-family="Inter, sans-serif" font-size="14" fill="#454440">&hellip;</text>
+
+        <!-- Cross-tier arrows -->
+        <line x1="550" y1="284" x2="550" y2="440" stroke="#9e4438" stroke-width="1.5" marker-end="url(#cs-t)" />
+        <path d="M562 284 V372 Q562 380 570 380 H712 Q720 380 720 388 V440" fill="none" stroke="#9e4438" stroke-width="1.5" marker-end="url(#cs-t)" />
+        <line x1="896" y1="367" x2="896" y2="440" stroke="#2c2b29" stroke-width="1.5" marker-end="url(#cs-d)" />
+        <text x="906" y="387" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#2c2b29">app.rs</text>
+      </svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">25</span>
+    </div>
+  </section>
+
+  <!-- ==================== 23. DERIVED FROM THE LOG (IMG_9274 · Slide 26) ==================== -->
+  <section class="slide theme-light" id="slide-23" data-label="26 · Derived from the log">
+    <h1 class="headline">Everything else is <span class="em">derived from the log.</span></h1>
+    <div class="slide-body">
+      <div>
+        <div class="tier-label muted">THE LOG</div>
+        <div class="log-chain">
+          <div class="log-box">changeset</div>
+          <span style="color:#454440; font-size:20px;">&rarr;</span>
+          <div class="log-box">changeset</div>
+          <span style="color:#454440; font-size:20px;">&rarr;</span>
+          <div class="log-box">changeset</div>
+          <span style="color:#454440; font-size:20px;">&rarr;</span>
+          <div class="log-box">changeset</div>
+          <span style="color:#454440; font-size:20px;">&rarr;</span>
+          <div class="log-box">changeset</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; padding: 14px 0;">
+        <svg width="24" height="84" viewBox="0 0 24 84" aria-hidden="true">
+          <line x1="12" y1="2" x2="12" y2="70" stroke="#a3493d" stroke-width="2" />
+          <polygon points="6,68 18,68 12,82" fill="#a3493d" />
+        </svg>
+      </div>
+
+      <div>
+        <div class="tier-label terra">DERIVED DATA</div>
+        <div class="derived-grid">
+          <div class="derived-box">File blame</div>
+          <div class="derived-box">Path history</div>
+          <div class="derived-box">Commit graph</div>
+          <div class="derived-box">File search</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Simplified.</span>
+      </div>
+      <span class="anth-num">26</span>
+    </div>
+  </section>
+
+  <!-- ==================== 24. CLIENT ONLY ASKS (IMG_9275 · Slide 27) ==================== -->
+  <section class="slide theme-dark" id="slide-24" data-label="27 · The client only asks for what it wants">
+    <h1 class="headline">The client only asks for <span class="em">what it wants.</span></h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="col-step-num">1</div>
+          <div class="col-heading">Root tree</div>
+          <div class="col-body">Start here</div>
+        </div>
+        <div class="col-item">
+          <div class="col-step-num">2</div>
+          <div class="col-heading">Missing trees</div>
+          <div class="col-body">Request recursively</div>
+        </div>
+        <div class="col-item">
+          <div class="col-step-num">3</div>
+          <div class="col-heading">Missing blobs</div>
+          <div class="col-body">Only what the job reads</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">27</span>
+    </div>
+  </section>
+
+  <!-- ==================== 25. TIERED CACHES (IMG_9276 · Slide 28) ==================== -->
+  <section class="slide theme-light" id="slide-25" data-label="28 · Checkouts go through tiered caches">
+    <h1 class="headline">Checkouts go through <span class="em">tiered caches.</span></h1>
+    <div class="slide-body">
+      <svg class="svg-chart" viewBox="0 0 1050 385" role="img" aria-label="Tiered cache architecture for Scion checkouts with Clients, scion-daemon, scion-cache, scion-server, Spanner, and Cloud Storage">
+        <defs>
+          <marker id="tc-t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#9e4438" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+          <marker id="tc-d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M1 1.5 L8 5 L1 8.5" fill="none" stroke="#2c2b29" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+
+        <!-- Clients container -->
+        <rect x="16" y="28" width="204" height="248" rx="9" fill="#e5e4e0" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="34" y="56" font-family="Inter, sans-serif" font-size="14.5" font-weight="600" fill="#1c1b1a">Clients</text>
+
+        <rect x="34" y="88" width="76" height="36" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="46" y="111" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Antique</text>
+
+        <rect x="34" y="156" width="168" height="36" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="46" y="179" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Developer machines</text>
+
+        <rect x="34" y="224" width="154" height="36" rx="7" fill="#f1f0ec" stroke="#3b3a38" stroke-width="1.4" />
+        <text x="46" y="247" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">CI and cluster jobs</text>
+
+        <!-- scion-daemon (blue) -->
+        <rect x="242" y="210" width="164" height="66" rx="9" fill="#dce4f2" stroke="#3b66a8" stroke-width="1.7" />
+        <text x="260" y="239" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">scion-daemon</text>
+        <text x="260" y="260" font-family="Inter, sans-serif" font-size="13" fill="#3b3a38">Per node</text>
+
+        <!-- Periodic snapshot -->
+        <rect x="242" y="324" width="164" height="46" rx="8" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="324" y="352" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1c1b1a">Periodic snapshot</text>
+        <line x1="324" y1="324" x2="324" y2="282" stroke="#2c2b29" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#tc-d)" />
+        <rect x="256" y="294" width="136" height="20" fill="#f4f3ee" />
+        <text x="324" y="308" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1c1b1a">Seeds new nodes</text>
+
+        <!-- scion-cache (blue tall) -->
+        <rect x="488" y="126" width="152" height="150" rx="9" fill="#dce4f2" stroke="#3b66a8" stroke-width="1.7" />
+        <text x="506" y="156" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">scion-cache</text>
+        <text x="506" y="177" font-family="Inter, sans-serif" font-size="13" fill="#3b3a38">Regional</text>
+
+        <!-- scion-server (blue) -->
+        <rect x="646" y="22" width="150" height="50" rx="9" fill="#dce4f2" stroke="#3b66a8" stroke-width="1.7" />
+        <text x="721" y="52" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#1c1b1a">scion-server</text>
+
+        <!-- Spanner -->
+        <rect x="866" y="16" width="162" height="78" rx="9" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="884" y="43" font-family="Inter, sans-serif" font-size="14.5" font-weight="600" fill="#1c1b1a">Spanner</text>
+        <text x="884" y="63" font-family="Inter, sans-serif" font-size="13" fill="#3b3a38">Changesets,</text>
+        <text x="884" y="80" font-family="Inter, sans-serif" font-size="13" fill="#3b3a38">branches, trees</text>
+
+        <!-- Cloud Storage -->
+        <rect x="866" y="114" width="162" height="68" rx="9" fill="#eae9e5" stroke="#3b3a38" stroke-width="1.5" />
+        <text x="884" y="143" font-family="Inter, sans-serif" font-size="14.5" font-weight="600" fill="#1c1b1a">Cloud Storage</text>
+        <text x="884" y="163" font-family="Inter, sans-serif" font-size="13" fill="#3b3a38">File contents</text>
+
+        <!-- Control plane arrow -->
+        <line x1="220" y1="50" x2="636" y2="50" stroke="#2c2b29" stroke-width="1.6" marker-end="url(#tc-d)" />
+        <text x="242" y="41" font-family="Inter, sans-serif" font-size="13.5" font-weight="600" fill="#1c1b1a">Branches, history, diffs: upload, commit, land</text>
+        <text x="242" y="69" font-family="Inter, sans-serif" font-size="13" fill="#454440">Control plane &middot; every client</text>
+
+        <!-- Object plane arrow (Dev machines -> scion-cache) -->
+        <line x1="202" y1="174" x2="480" y2="174" stroke="#9e4438" stroke-width="1.6" marker-end="url(#tc-t)" />
+        <text x="242" y="165" font-family="Inter, sans-serif" font-size="13.5" font-weight="600" fill="#9e4438">Trees and file contents</text>
+        <text x="242" y="193" font-family="Inter, sans-serif" font-size="13" fill="#454440">Object plane</text>
+
+        <!-- CI jobs -> scion-daemon -> scion-cache -> scion-server -->
+        <line x1="188" y1="242" x2="236" y2="242" stroke="#9e4438" stroke-width="1.6" marker-end="url(#tc-t)" />
+        <line x1="406" y1="242" x2="480" y2="242" stroke="#9e4438" stroke-width="1.6" marker-end="url(#tc-t)" />
+        <text x="444" y="231" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#9e4438">Misses</text>
+
+        <path d="M640 202 H710 Q721 202 721 190 V78" fill="none" stroke="#9e4438" stroke-width="1.6" marker-end="url(#tc-t)" />
+        <text x="678" y="191" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#9e4438">Misses</text>
+
+        <!-- scion-server -> Spanner & Cloud Storage -->
+        <line x1="796" y1="47" x2="858" y2="47" stroke="#2c2b29" stroke-width="1.6" marker-end="url(#tc-d)" />
+        <path d="M816 47 Q828 47 828 60 V136 Q828 148 840 148 H858" fill="none" stroke="#2c2b29" stroke-width="1.6" marker-end="url(#tc-d)" />
+      </svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">28</span>
+    </div>
+  </section>
+
+  <!-- ==================== 26. 200X SMALLER (IMG_9277 · Slide 29) ==================== -->
+  <section class="slide theme-light" id="slide-26" data-label="29 · The new footprint is 200x smaller">
+    <h1 class="headline">The new footprint is <span class="em">200x smaller.</span></h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="kpi-num">99%+</div>
+          <div class="col-body">cache hit rate at each tier</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num accent-up">200x</div>
+          <div class="col-body">less CPU and memory<br />than the git mirrors</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num">25%</div>
+          <div class="col-body">CPU capacity back for CI</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">29</span>
+    </div>
+  </section>
+
+  <!-- ==================== 27. EVERYDAY COMMANDS (IMG_9278 · Slide 30) ==================== -->
+  <section class="slide theme-light" id="slide-27" data-label="30 · Everyday commands got faster">
+    <div class="slide-body" style="padding-top: 8px;">
+      <svg id="chart-dev-cmds" class="svg-chart" viewBox="0 0 1050 470" role="img" aria-label="Developer environments median command speeds comparing git and scn"></svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Median times.</span>
+      </div>
+      <span class="anth-num">30</span>
+    </div>
+  </section>
+
+  <!-- ==================== 28. AGENTS GOT BACK 30 MIN (IMG_9279 · Slide 31) ==================== -->
+  <section class="slide theme-light" id="slide-28" data-label="31 · Agents got back 30 minutes per change">
+    <h1 class="headline">Agents got back <span class="em">30 minutes per change.</span></h1>
+    <div class="slide-body">
+      <svg id="chart-agent-cmds" class="svg-chart" viewBox="0 0 1050 400" role="img" aria-label="Agent environments median times comparing git and Scion"></svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Median times, git in grey, Scion in orange.</span>
+      </div>
+      <span class="anth-num">31</span>
+    </div>
+  </section>
+
+  <!-- ==================== 29. CI SAVES 195,000 HRS (IMG_9280 · Slide 32) ==================== -->
+  <section class="slide theme-light" id="slide-29" data-label="32 · CI saves 195,000 machine hours/day">
+    <h1 class="headline">CI saves about <span class="em">195,000 machine hours a day.</span></h1>
+    <div class="slide-body">
+      <svg id="chart-ci-jobs" class="svg-chart" viewBox="0 0 1050 270" role="img" aria-label="CI and compute jobs checkout median times comparing Git and Scion"></svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Git in grey, Scion in orange.</span>
+      </div>
+      <span class="anth-num">32</span>
+    </div>
+  </section>
+
+  <!-- ==================== 30. SEVEN PEOPLE BUILT IT (IMG_9281 · Slide 33) ==================== -->
+  <section class="slide theme-light" id="slide-30" data-label="33 · Seven people built it in five months">
+    <h1 class="headline">Seven people built it <span class="em">in five months.</span></h1>
+    <div class="slide-body">
+      <svg id="chart-weekly-changes" class="svg-chart" viewBox="0 0 1040 400" role="img" aria-label="Weekly changes to Scion and Antique totaling 12,257 since January"></svg>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Weekly changes to Scion and Antique.</span>
+      </div>
+      <span class="anth-num">33</span>
+    </div>
+  </section>
+
+  <!-- ==================== 31. CLAUDE REWRITE PIPELINE (IMG_9282 · Slide 34) ==================== -->
+  <section class="slide theme-dark" id="slide-31" data-label="34 · Rewrote a pipeline: 20x / 4x">
+    <h1 class="headline">They asked Claude to rewrite a pipeline<br /><span class="em">they thought was good.</span></h1>
+    <div class="slide-body">
+      <div class="cols-2 narrow">
+        <div class="col-item">
+          <div class="kpi-num accent-up">20x</div>
+          <div class="col-body">less memory</div>
+        </div>
+        <div class="col-item">
+          <div class="kpi-num">4x</div>
+          <div class="col-body">faster</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">34</span>
+    </div>
+  </section>
+
+  <!-- ==================== 32. EXTRA SPEED INTO TESTING (IMG_9283 · Slide 35) ==================== -->
+  <section class="slide theme-light" id="slide-32" data-label="35 · Extra speed into testing">
+    <h1 class="headline">They put the extra speed <span class="em">into testing.</span></h1>
+    <div class="slide-body">
+      <div class="cols-3">
+        <div class="col-item">
+          <div class="col-heading accent-up">Simulations</div>
+          <div class="col-body">Hermetic, for every<br />non-trivial interaction</div>
+        </div>
+        <div class="col-item">
+          <div class="col-heading">Fuzzing</div>
+          <div class="col-body">Even on a tight timeline</div>
+        </div>
+        <div class="col-item">
+          <div class="col-heading">Rate limits</div>
+          <div class="col-body">Built to defend the<br />system</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">35</span>
+    </div>
+  </section>
+
+  <!-- ==================== 33. WHAT KIND OF CHANGE (IMG_9284 · Slide 36) ==================== -->
+  <section class="slide theme-dark" id="slide-33" data-label="36 · Simple vs consequential changes">
+    <h1 class="headline">Our review tool knows <span class="em">what kind of change</span> it is.</h1>
+    <div class="slide-body" style="justify-content: space-between; padding: 34px 0 16px;">
+      <div class="cols-2">
+        <div class="col-item">
+          <div class="col-heading">Comment-only change</div>
+          <div class="col-kicker">SIMPLE</div>
+          <div class="col-body">Told apart by the approval rules</div>
+        </div>
+        <div class="col-item">
+          <div class="col-heading accent-up">Sensitive logic change</div>
+          <div class="col-kicker accent-up">CONSEQUENTIAL</div>
+          <div class="col-body">Where human reviewers focus</div>
+        </div>
+      </div>
+      <div style="font-family:var(--font-serif); font-style:italic; font-size:30px; color:var(--ink-dark); margin-top:24px;">
+        The team that built it now reviews for intent
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">36</span>
+    </div>
+  </section>
+
+  <!-- ==================== 34. MERGE LOCK VS POST-MERGE (IMG_9285 · Slide 37) ==================== -->
+  <section class="slide theme-light" id="slide-34" data-label="37 · Testing after merge">
+    <h1 class="headline">A global merge lock didn&rsquo;t work for us,<br /><span class="em">so we invested in testing after merge.</span></h1>
+    <div class="slide-body" style="gap: 44px;">
+      <div class="pipe-block">
+        <div class="tier-label muted" style="margin-bottom:0;">THE STANDARD</div>
+        <div class="pipe-row">
+          <div class="pipe-step">Review</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step terra">Locked queue</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step">Merge</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step">Deploy</div>
+        </div>
+      </div>
+      <div class="pipe-block">
+        <div class="tier-label muted" style="margin-bottom:0;">OURS</div>
+        <div class="pipe-row">
+          <div class="pipe-step">Review</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step">Merge</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step terra">Post-merge<br />tests</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step terra">Pre-deploy<br />tests</div>
+          <span style="color:#454440;">&rarr;</span>
+          <div class="pipe-step">Deploy</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026. Simplified.</span>
+      </div>
+      <span class="anth-num">37</span>
+    </div>
+  </section>
+
+  <!-- ==================== 35. SUPERFANS (IMG_9286 · Slide 38) ==================== -->
+  <section class="slide theme-light" id="slide-35" data-label="38 · Each component gets a superfan">
+    <h1 class="headline">Each component gets <span class="em">a superfan.</span></h1>
+    <div class="slide-body" style="gap: 42px;">
+      <div class="superfan-grid">
+        <div class="superfan-col">
+          <div class="superfan-dot"></div>
+          <svg width="20" height="72" viewBox="0 0 20 72" aria-hidden="true">
+            <line x1="10" y1="0" x2="10" y2="58" stroke="#a3493d" stroke-width="1.8" />
+            <polygon points="5,56 15,56 10,70" fill="#a3493d" />
+          </svg>
+          <div class="superfan-box">scion-daemon</div>
+        </div>
+        <div class="superfan-col">
+          <div class="superfan-dot"></div>
+          <svg width="20" height="72" viewBox="0 0 20 72" aria-hidden="true">
+            <line x1="10" y1="0" x2="10" y2="58" stroke="#a3493d" stroke-width="1.8" />
+            <polygon points="5,56 15,56 10,70" fill="#a3493d" />
+          </svg>
+          <div class="superfan-box">scion-cache</div>
+        </div>
+        <div class="superfan-col">
+          <div class="superfan-dot"></div>
+          <svg width="20" height="72" viewBox="0 0 20 72" aria-hidden="true">
+            <line x1="10" y1="0" x2="10" y2="58" stroke="#a3493d" stroke-width="1.8" />
+            <polygon points="5,56 15,56 10,70" fill="#a3493d" />
+          </svg>
+          <div class="superfan-box">Antique merge queue</div>
+        </div>
+      </div>
+      <div style="font-size:21px; color:var(--ink-light-muted);">
+        One Claude per component, reading telemetry and logs for anything strange
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">38</span>
+    </div>
+  </section>
+
+  <!-- ==================== 36. SCION NOT FOR GENERAL USE (IMG_9287 · Slide 39) ==================== -->
+  <section class="slide theme-dark" id="slide-36" data-label="39 · Not a general replacement for git">
+    <div class="slide-body">
+      <div class="quote-text italic-all">Scion is <span class="em">by no means a suitable<br />replacement</span> for git for general use.</div>
+      <div class="quote-attr"><span class="quote-rule"></span></div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">39</span>
+    </div>
+  </section>
+
+  <!-- ==================== 37. KEEP GIT, BORROW THREE IDEAS (IMG_9288 · Slide 40) ==================== -->
+  <section class="slide theme-light" id="slide-37" data-label="40 · Keep git, borrow three ideas">
+    <div class="slide-body top-aligned">
+      <div class="split-list">
+        <h1 class="headline">Keep git, and<br />borrow<br /><span class="em">three ideas.</span></h1>
+        <div class="num-list">
+          <div class="num-row">
+            <div class="num-idx">1</div>
+            <div>
+              <div class="num-title">Ask the server</div>
+              <div class="num-sub">Diffs, blame and merge bases without a clone</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">2</div>
+            <div>
+              <div class="num-title">Check out less</div>
+              <div class="num-sub">Only what the job reads</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">3</div>
+            <div>
+              <div class="num-title">Approve by kind of change</div>
+              <div class="num-sub">Save people for the consequential ones</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">40</span>
+    </div>
+  </section>
+
+  <!-- ==================== 38. ASSUMPTION 4: APPROVALS (IMG_9289 · Slide 42) ==================== -->
+  <section class="slide theme-dark" id="slide-38" data-label="42 · [Approvals] Reads prompt before yes">
+    <div class="slide-body" style="justify-content: space-between; padding: 36px 0 28px;">
+      <div>
+        <div class="eyebrow">THE ASSUMPTION</div>
+        <h1 class="headline lg">A person reads the prompt before<br />clicking yes.</h1>
+      </div>
+      <div class="stepper-wrap">
+        <div class="stepper-line"></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Review</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">CI</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Source control</div></div>
+        <div class="stepper-node active"><div class="stepper-dot"></div><div class="stepper-label">Approvals</div></div>
+        <div class="stepper-node"><div class="stepper-dot"></div><div class="stepper-label">Boundaries</div></div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">42</span>
+    </div>
+  </section>
+
+  <!-- ==================== 39. 93% PERMISSION PROMPTS (IMG_9290 · Slide 43) ==================== -->
+  <section class="slide theme-light" id="slide-39" data-label="43 · 93% approved / 84% fewer with sandbox">
+    <h1 class="headline">People approved <span class="accent-up">93%</span> <span class="em">of permission prompts.</span></h1>
+    <div class="slide-body">
+      <div class="waffle-layout">
+        <div>
+          <div class="waffle-grid" id="waffle-93" aria-label="93 out of 100 dots filled"></div>
+          <div style="font-size:19px; line-height:1.4; color:var(--ink-light-muted); margin-top:24px;">
+            The more prompts people see, the less attention<br />each one gets
+          </div>
+        </div>
+        <div class="waffle-right">
+          <div class="kpi-num" style="font-size:clamp(56px,6vw,78px);">84%</div>
+          <div class="col-body" style="font-size:20px;">fewer prompts after we<br />added a sandbox</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How we contain Claude across products,&rdquo; anthropic.com, May 2026</span>
+      </div>
+      <span class="anth-num">43</span>
+    </div>
+  </section>
+
+  <!-- ==================== 40. RED-TEAM 24 OF 25 (IMG_9291 · Slide 44) ==================== -->
+  <section class="slide theme-dark" id="slide-40" data-label="44 · Red-team: 24 times out of 25">
+    <h1 class="headline">In our own red-team test, credentials got out<br /><span class="em">24 times out of 25.</span></h1>
+    <div class="slide-body">
+      <div class="unit-bars" id="unit-bars-24" aria-label="24 filled coral bars and 1 empty outlined bar"></div>
+      <div style="font-size:20px; color:var(--ink-dark);">
+        A phished employee pasted the prompt, so nothing looked unusual to the model
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How we contain Claude across products,&rdquo; anthropic.com, May 2026</span>
+      </div>
+      <span class="anth-num">44</span>
+    </div>
+  </section>
+
+  <!-- ==================== 41. DETERMINISTIC BOUNDARY (IMG_9292 · Slide 45) ==================== -->
+  <section class="slide theme-dark" id="slide-41" data-label="45 · The deterministic boundary">
+    <div class="slide-body">
+      <div class="quote-text italic-all">&ldquo;The deterministic boundary is<br /><span class="em">what gets hit</span> when everything<br />probabilistic misses.&rdquo;</div>
+      <div class="quote-attr">
+        <span class="quote-rule"></span>
+        <span>Anthropic engineering</span>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How we contain Claude across products,&rdquo; anthropic.com, May 2026</span>
+      </div>
+      <span class="anth-num">45</span>
+    </div>
+  </section>
+
+  <!-- ==================== 42. INCIDENT RESPONSE AGENT (IMG_9293 · Slide 47) ==================== -->
+  <section class="slide theme-dark" id="slide-42" data-label="47 · Incident agent cannot deploy">
+    <div class="slide-body">
+      <h1 class="headline" style="font-size:clamp(34px,4vw,52px); line-height:1.22;">
+        Our incident response agent finds the root<br />
+        cause when an alert fires, and it has no<br />
+        permission to deploy a fix.
+      </h1>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How Anthropic secures its AI-native software development lifecycle,&rdquo; claude.com, July 2026</span>
+      </div>
+      <span class="anth-num">47</span>
+    </div>
+  </section>
+
+  <!-- ==================== 43. JASON CLINTON QUOTE (IMG_9295 · Slide 50) ==================== -->
+  <section class="slide theme-light" id="slide-43" data-label="50 · Boundary around access and actions">
+    <div class="slide-body">
+      <div class="quote-text italic-all">&ldquo;&hellip;draw the boundary around <span class="em">access and<br />actions,</span> not around a model&rsquo;s instructions or<br />what we believe a model can do.&rdquo;</div>
+      <div class="quote-attr">
+        <span class="quote-rule"></span>
+        <span>Jason Clinton, Deputy CISO, Anthropic</span>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;How Anthropic secures its AI-native software development lifecycle,&rdquo; claude.com, July 2026</span>
+      </div>
+      <span class="anth-num">50</span>
+    </div>
+  </section>
+
+  <!-- ==================== 44. EACH STAGE ENDS IN A FILE (IMG_9296 · Slide 51) ==================== -->
+  <section class="slide theme-light" id="slide-44" data-label="51 · Each stage ends in a file">
+    <h1 class="headline">Each stage ends in a file<br /><span class="em">a person can review.</span></h1>
+    <div class="slide-body">
+      <div class="stage-grid">
+        <div class="stage-col">
+          <div class="stage-name">Plan</div>
+          <div class="stage-box">intent.md</div>
+        </div>
+        <div class="stage-col">
+          <div class="stage-name">Design</div>
+          <div class="stage-box">spec.md</div>
+        </div>
+        <div class="stage-col">
+          <div class="stage-name">Build</div>
+          <div class="stage-box">plan.md<br />+ diff</div>
+        </div>
+        <div class="stage-col">
+          <div class="stage-name">Test</div>
+          <div class="stage-box">test<br />results</div>
+        </div>
+        <div class="stage-col">
+          <div class="stage-name">Deploy</div>
+          <div class="stage-box">PR<br />findings</div>
+        </div>
+        <div class="stage-col">
+          <div class="stage-name">Maintain</div>
+          <div class="stage-box">incident<br />record</div>
+        </div>
+      </div>
+
+      <svg class="svg-chart" viewBox="0 0 1040 58" aria-hidden="true" style="margin-top:8px;">
+        <path d="M956 4 V48 H84 V14" fill="none" stroke="#a3493d" stroke-width="2" />
+        <polygon points="77,17 91,17 84,3" fill="#a3493d" />
+      </svg>
+
+      <div style="text-align:center; font-family:var(--font-serif); font-style:italic; font-size:24px; color:var(--accent-light); margin-top:8px;">
+        What production finds becomes the next intent.md
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;The AI-native SDLC playbook,&rdquo; claude.com, Aug 2026</span>
+      </div>
+      <span class="anth-num">51</span>
+    </div>
+  </section>
+
+  <!-- ==================== 45. TELL CLAUDE NO (IMG_9297 · Slide 52) ==================== -->
+  <section class="slide theme-dark" id="slide-45" data-label="52 · Role of engineers: tell Claude 'no'">
+    <div class="slide-body">
+      <div class="quote-text italic-all">Very often, we found that the role of the<br />engineers was <span class="em">to tell Claude &lsquo;no.&rsquo;</span></div>
+      <div class="quote-attr"><span class="quote-rule"></span></div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Source: &ldquo;Redesigning source control at Anthropic,&rdquo; anthropic.com, Oct 2026</span>
+      </div>
+      <span class="anth-num">52</span>
+    </div>
+  </section>
+
+  <!-- ==================== 46. THREE THINGS FOR MONDAY (IMG_9298 · Slide 53) ==================== -->
+  <section class="slide theme-light" id="slide-46" data-label="53 · Three things for Monday">
+    <div class="slide-body top-aligned">
+      <div class="split-list">
+        <h1 class="headline">Three things for<br />Monday. If you<br />only do one,<br /><span class="em">do the first.</span></h1>
+        <div class="num-list">
+          <div class="num-row">
+            <div class="num-idx">1</div>
+            <div>
+              <div class="num-title">Imagine 10x load on each stage</div>
+              <div class="num-sub">Give the first one that fails an owner</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">2</div>
+            <div>
+              <div class="num-title">Tier your code by risk</div>
+              <div class="num-sub">Write down where a person approves</div>
+            </div>
+          </div>
+          <div class="num-row">
+            <div class="num-idx">3</div>
+            <div>
+              <div class="num-title">Turn one rule into a permission</div>
+              <div class="num-sub">Pick the one that must always hold</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left"><span class="anth-logo">ANTHROP\C</span></div>
+      <span class="anth-num">53</span>
+    </div>
+  </section>
+
+  <!-- ==================== 47. RECAP TABLE (IMG_9299 · Slide 54) ==================== -->
+  <section class="slide theme-light" id="slide-47" data-label="54 · Recap: five assumptions we replaced">
+    <h1 class="headline">To recap: five assumptions <span class="em">we replaced.</span></h1>
+    <div class="slide-body">
+      <div class="cmp-table">
+        <div class="recap-row">
+          <div class="recap-stage">Review</div>
+          <div class="recap-old">A person reads every line</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="recap-new">Narrow agents, proofs, risk tiers</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-stage">CI</div>
+          <div class="recap-old">Load grows with headcount</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="recap-new">Horizontally scaled test selection</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-stage">Source control</div>
+          <div class="recap-old">One merge at a time</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="recap-new">Post-merge and pre-deploy tests</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-stage">Approvals</div>
+          <div class="recap-old">A person reads each prompt</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="recap-new">A sandbox and fewer gates</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-stage">Boundaries</div>
+          <div class="recap-old">Reach ends at its permissions</div>
+          <div class="cmp-arrow">&rarr;</div>
+          <div class="recap-new">Identity and limits per agent</div>
+        </div>
+      </div>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source">Summary is mine, drawn from the posts listed at the end.</span>
+      </div>
+      <span class="anth-num">54</span>
+    </div>
+  </section>
+
+  <!-- ==================== 48. CLOSING CORAL SLIDE (IMG_9300 · Slide 55) ==================== -->
+  <section class="slide theme-coral" id="slide-48" data-label="55 · Find the step that still assumes a person's pace">
+    <div class="slide-body">
+      <h1 class="headline xl">Find the step that still assumes<br /><span class="em">a person&rsquo;s pace.</span></h1>
+    </div>
+    <div class="anth-footer">
+      <div class="anth-footer-left">
+        <span class="anth-logo">ANTHROP\C</span>
+        <span class="anth-source" style="opacity:0.85;">Credit: Tal Magdish, Member of Technical Staff, Anthropic (x.com/TalMagdish) &middot; PortCon 2026</span>
+      </div>
+      <span class="anth-num">55</span>
+    </div>
+  </section>
+
+  <!-- ==================== DECK CONTROLS ==================== -->
+  <div class="deck-controls" aria-label="Slide navigation">
+    <button id="prevBtn" type="button">&larr; Prev</button>
+    <span id="counter">1 / 48</span>
+    <select id="jumpSelect" aria-label="Jump to slide"></select>
+    <button id="nextBtn" type="button">Next &rarr;</button>
+    <button id="modeBtn" type="button">Show All</button>
+  </div>
+
+  <script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    function svgEl(tag, attrs = {}, text = null) {
+      const el = document.createElementNS(SVG_NS, tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+      if (text !== null) el.textContent = text;
+      return el;
+    }
+
+    /* ---------- Build Slide 43 Waffle (93 terracotta + 7 grey) ---------- */
+    (function buildWaffle() {
+      const root = document.getElementById("waffle-93");
+      for (let i = 0; i < 100; i++) {
+        const d = document.createElement("div");
+        d.className = i < 93 ? "waffle-dot" : "waffle-dot off";
+        root.appendChild(d);
+      }
+    })();
+
+    /* ---------- Build Slide 44 Red-team 24/25 Unit Bars ---------- */
+    (function buildUnitBars() {
+      const root = document.getElementById("unit-bars-24");
+      for (let i = 0; i < 25; i++) {
+        const b = document.createElement("div");
+        b.className = i < 24 ? "unit-bar" : "unit-bar safe";
+        root.appendChild(b);
+      }
+    })();
+
+    /* ---------- Build Slide 6 Daily Merges Stacked Bar Chart ---------- */
+    (function buildDailyMerges() {
+      const svg = document.getElementById("chart-daily-merges");
+      const L = 74, R = 1015, T = 20, B = 326;
+      const W = R - L, H = B - T;
+      const yMax = 35000;
+      const yOf = (v) => B - (v / yMax) * H;
+
+      // Gridlines + Y-axis labels
+      for (let v = 0; v <= 35000; v += 5000) {
+        const y = yOf(v);
+        svg.appendChild(svgEl("line", { x1: L, y1: y, x2: R, y2: y, stroke: v === 0 ? "#454440" : "#d8d6d0", "stroke-width": v === 0 ? 1.4 : 1 }));
+        svg.appendChild(svgEl("line", { x1: L - 5, y1: y, x2: L, y2: y, stroke: "#454440", "stroke-width": 1.3 }));
+        svg.appendChild(svgEl("text", { x: L - 11, y: y + 4, "text-anchor": "end", "font-family": "Inter, sans-serif", "font-size": 12.5, fill: "#333230" }, v.toLocaleString()));
+      }
+      svg.appendChild(svgEl("line", { x1: L, y1: T, x2: L, y2: B, stroke: "#454440", "stroke-width": 1.4 }));
+
+      // Deterministic daily series matching IMG_9255 (Jan 4 -> Sep 12, ~244 days)
+      const days = 244;
+      const series = [];
+      for (let i = 0; i < days; i++) {
+        const dow = i % 7; // 5,6 = weekend
+        const wkMult = (dow === 5 || dow === 6) ? 0.24 : (0.88 + 0.22 * Math.sin(i * 1.7));
+        const p = i / days; // 0..1 across Jan..mid-Sep
+        let pr = 0, ac = 0;
+
+        if (i < 138) {
+          // Jan -> mid-May: PRs climb from ~750 to ~4,100
+          const base = 700 + (i / 138) * 3300;
+          pr = base * wkMult;
+          if (i > 125) ac = ((i - 125) / 13) * 400 * wkMult;
+        } else if (i < 176) {
+          // Late May -> Jun: transition from PRs to Antique CRs (~4,200 -> ~6,500)
+          const t = (i - 138) / 38;
+          const total = (4100 + t * 2400) * wkMult;
+          pr = total * Math.max(0.06, 0.85 * (1 - t));
+          ac = total - pr;
+        } else if (i < 200) {
+          // Jul: Antique climbs ~6,500 -> ~8,800
+          const t = (i - 176) / 24;
+          const total = (6400 + t * 2500) * wkMult;
+          pr = 260 * wkMult;
+          ac = total - pr;
+        } else if (i < 211) {
+          // Early Aug: Quiet week dip down to ~1,900
+          const mid = Math.abs(i - 205.5) / 5.5;
+          const total = (1950 + mid * 2400) * (dow === 5 || dow === 6 ? 0.55 : 0.95);
+          pr = 120;
+          ac = total - pr;
+        } else {
+          // Mid-Aug -> Sep 12: sharp rise to Sep 9 peak of 30,401
+          const t = (i - 211) / (days - 211);
+          const base = 6800 + Math.pow(t, 1.45) * 15500;
+          let total = base * wkMult;
+          if (i === 239) total = 24600;
+          if (i === 240) total = 30401;
+          if (i === 241) total = 21200;
+          if (i === 242) total = 15800;
+          if (i === 243) total = 11400;
+          pr = 140;
+          ac = Math.max(0, total - pr);
+        }
+        series.push({ pr, ac, total: pr + ac });
+      }
+
+      const barStep = (W - 22) / days;
+      const barW = Math.max(1.8, barStep * 0.68);
+      const startX = L + 12;
+
+      series.forEach((d, i) => {
+        const x = startX + i * barStep;
+        const prH = (d.pr / yMax) * H;
+        const acH = (d.ac / yMax) * H;
+        if (prH > 0.4) {
+          svg.appendChild(svgEl("rect", { x, y: B - prH, width: barW, height: prH, fill: "#3867b3" }));
+        }
+        if (acH > 0.4) {
+          svg.appendChild(svgEl("rect", { x, y: B - prH - acH, width: barW, height: acH, fill: "#a3493d" }));
+        }
+      });
+
+      // 7-day average line
+      const pts = [];
+      for (let i = 3; i < days; i++) {
+        let sum = 0;
+        for (let k = Math.max(0, i - 6); k <= i; k++) sum += series[k].total;
+        const avg = sum / Math.min(7, i + 1);
+        pts.push(`${(startX + i * barStep + barW / 2).toFixed(1)},${yOf(avg).toFixed(1)}`);
+      }
+      svg.appendChild(svgEl("polyline", { points: pts.join(" "), fill: "none", stroke: "#1c1b1a", "stroke-width": 1.8, "stroke-linejoin": "round" }));
+
+      // Month ticks
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+      months.forEach((m, idx) => {
+        const x = L + (idx / 8.55) * (W - 26);
+        svg.appendChild(svgEl("line", { x1: x, y1: B, x2: x, y2: B + 5, stroke: "#454440", "stroke-width": 1.3 }));
+        svg.appendChild(svgEl("text", { x, y: B + 23, "text-anchor": "middle", "font-family": "Inter, sans-serif", "font-size": 13, fill: "#333230" }, m));
+      });
+
+      // Quiet week annotation
+      const qx = startX + 205 * barStep;
+      svg.appendChild(svgEl("line", { x1: qx, y1: yOf(11500), x2: qx, y2: yOf(4800), stroke: "#333230", "stroke-width": 1.3, "stroke-dasharray": "5 4" }));
+      svg.appendChild(svgEl("text", { x: qx, y: yOf(12400), "text-anchor": "middle", "font-family": "Inter, sans-serif", "font-size": 13.5, "font-weight": 500, fill: "#1c1b1a" }, "Quiet week"));
+
+      // Peak callout box
+      svg.appendChild(svgEl("rect", { x: 814, y: 40, width: 146, height: 52, rx: 8, fill: "#f4f3ee", stroke: "#333230", "stroke-width": 1.3 }));
+      svg.appendChild(svgEl("text", { x: 946, y: 63, "text-anchor": "end", "font-family": "Inter, sans-serif", "font-size": 18, "font-weight": 700, fill: "#1c1b1a" }, "30,401"));
+      svg.appendChild(svgEl("text", { x: 946, y: 81, "text-anchor": "end", "font-family": "Inter, sans-serif", "font-size": 13, fill: "#333230" }, "merged on Sep 9"));
+
+      // Legend
+      const ly = 376;
+      svg.appendChild(svgEl("rect", { x: 292, y: ly - 12, width: 15, height: 15, rx: 3, fill: "#3867b3" }));
+      svg.appendChild(svgEl("text", { x: 315, y: ly, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#2c2b29" }, "Pull requests"));
+      svg.appendChild(svgEl("rect", { x: 432, y: ly - 12, width: 15, height: 15, rx: 3, fill: "#a3493d" }));
+      svg.appendChild(svgEl("text", { x: 455, y: ly, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#2c2b29" }, "Antique change requests"));
+      svg.appendChild(svgEl("line", { x1: 650, y1: ly - 4, x2: 674, y2: ly - 4, stroke: "#1c1b1a", "stroke-width": 2.2 }));
+      svg.appendChild(svgEl("text", { x: 682, y: ly, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#2c2b29" }, "7-day average"));
+    })();
+
+    /* ---------- Helper for Grouped Horizontal Bar Subcharts (Slides 30, 31, 32) ---------- */
+    function renderGroupedBars(svg, opts) {
+      const { x0, y0, width, rowGap, barH, maxVal, ticks, rows, title, showMultiplier = true, rightExtra = false } = opts;
+      const chartH = rows.length * rowGap + 8;
+
+      if (title) {
+        svg.appendChild(svgEl("text", { x: x0, y: y0 - 16, "font-family": "Inter, sans-serif", "font-size": 18, "font-weight": 700, fill: "#1c1b1a" }, title));
+      }
+
+      // Gridlines & x-axis ticks
+      ticks.forEach((t) => {
+        const x = x0 + (t.v / maxVal) * width;
+        svg.appendChild(svgEl("line", { x1: x, y1: y0, x2: x, y2: y0 + chartH, stroke: t.v === 0 ? "#3b3a38" : "#dcdad4", "stroke-width": t.v === 0 ? 1.5 : 1 }));
+        svg.appendChild(svgEl("line", { x1: x, y1: y0 + chartH, x2: x, y2: y0 + chartH + 6, stroke: "#3b3a38", "stroke-width": 1.4 }));
+        svg.appendChild(svgEl("text", { x, y: y0 + chartH + 22, "text-anchor": "middle", "font-family": "Inter, sans-serif", "font-size": 13, fill: "#333230" }, t.label));
+      });
+      svg.appendChild(svgEl("line", { x1: x0, y1: y0 + chartH, x2: x0 + width, y2: y0 + chartH, stroke: "#3b3a38", "stroke-width": 1.5 }));
+
+      rows.forEach((r, idx) => {
+        const ry = y0 + 10 + idx * rowGap;
+        // Row label
+        svg.appendChild(svgEl("text", { x: x0 - 16, y: ry + barH + 3, "text-anchor": "end", "font-family": "Inter, sans-serif", "font-size": 14, "font-weight": 500, fill: "#2c2b29" }, r.label));
+
+        // Git bar (top, dark grey)
+        const gw = Math.max(3, (r.git / maxVal) * width);
+        svg.appendChild(svgEl("rect", { x: x0, y: ry, width: gw, height: barH, rx: 2.5, fill: "#474a4d" }));
+        svg.appendChild(svgEl("text", { x: x0 + gw + 8, y: ry + barH - 4, "font-family": "Inter, sans-serif", "font-size": 13, "font-weight": 600, fill: "#2c2b29" }, r.gitText));
+
+        // Scion bar (bottom, terracotta)
+        const sw = Math.max(2.5, (r.scn / maxVal) * width);
+        svg.appendChild(svgEl("rect", { x: x0, y: ry + barH, width: sw, height: barH, rx: 2.5, fill: "#a3493d" }));
+        svg.appendChild(svgEl("text", { x: x0 + sw + 8, y: ry + barH * 2 - 4, "font-family": "Inter, sans-serif", "font-size": 13, "font-weight": 600, fill: "#2c2b29" }, r.scnText));
+
+        if (showMultiplier && r.mult) {
+          svg.appendChild(svgEl("text", { x: x0 + width + 48, y: ry + barH + 4, "font-family": "Inter, sans-serif", "font-size": 14.5, "font-weight": 700, fill: "#1c1b1a" }, r.mult));
+        }
+        if (rightExtra && r.extra) {
+          svg.appendChild(svgEl("text", { x: x0 + width + 104, y: ry + barH + 4, "font-family": "Inter, sans-serif", "font-size": 14.5, fill: "#2c2b29" }, r.extra));
+        }
+      });
+    }
+
+    /* ---------- Slide 30: Everyday Commands ---------- */
+    (function buildDevCmds() {
+      const svg = document.getElementById("chart-dev-cmds");
+      svg.appendChild(svgEl("text", { x: 0, y: 74, "font-family": "Newsreader, Georgia, serif", "font-size": 46, fill: "#1c1b1a" }, "Everyday"));
+      svg.appendChild(svgEl("text", { x: 0, y: 126, "font-family": "Newsreader, Georgia, serif", "font-size": 46, fill: "#1c1b1a" }, "commands"));
+      svg.appendChild(svgEl("text", { x: 0, y: 178, "font-family": "Newsreader, Georgia, serif", "font-size": 46, "font-style": "italic", fill: "#a3493d" }, "got faster."));
+
+      // Legend box & Faster header
+      svg.appendChild(svgEl("rect", { x: 752, y: 20, width: 146, height: 34, rx: 7, fill: "#f4f3ee", stroke: "#3b3a38", "stroke-width": 1.3 }));
+      svg.appendChild(svgEl("rect", { x: 766, y: 29, width: 16, height: 16, rx: 3, fill: "#474a4d" }));
+      svg.appendChild(svgEl("text", { x: 790, y: 42, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#1c1b1a" }, "git"));
+      svg.appendChild(svgEl("rect", { x: 830, y: 29, width: 16, height: 16, rx: 3, fill: "#a3493d" }));
+      svg.appendChild(svgEl("text", { x: 854, y: 42, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#1c1b1a" }, "scn"));
+      svg.appendChild(svgEl("text", { x: 960, y: 42, "font-family": "Inter, sans-serif", "font-size": 14, "font-weight": 500, fill: "#1c1b1a" }, "Faster"));
+
+      renderGroupedBars(svg, {
+        x0: 410, y0: 66, width: 500, rowGap: 52, barH: 18, maxVal: 100,
+        title: "Developer environments",
+        ticks: [0, 20, 40, 60, 80, 100].map(v => ({ v, label: `${v} s` })),
+        rows: [
+          { label: "Pull latest", git: 87, gitText: "87 s", scn: 3.5, scnText: "3.5 s", mult: "\u00d725" },
+          { label: "Checkout", git: 15, gitText: "15 s", scn: 1.1, scnText: "1.1 s", mult: "\u00d714" },
+          { label: "Rebase", git: 13, gitText: "13 s", scn: 2.7, scnText: "2.7 s", mult: "\u00d74.8" },
+        ]
+      });
+
+      renderGroupedBars(svg, {
+        x0: 410, y0: 274, width: 500, rowGap: 52, barH: 18, maxVal: 4,
+        ticks: [0, 1, 2, 3, 4].map(v => ({ v, label: `${v} s` })),
+        rows: [
+          { label: "Status", git: 3.9, gitText: "3.9 s", scn: 0.019, scnText: "19 ms", mult: "\u00d7207" },
+          { label: "Commit", git: 1.4, gitText: "1.4 s", scn: 1.1, scnText: "1.1 s", mult: "\u00d71.3" },
+          { label: "Diff", git: 0.407, gitText: "407 ms", scn: 0.067, scnText: "67 ms", mult: "\u00d76.1" },
+        ]
+      });
+    })();
+
+    /* ---------- Slide 31: Agents Got Back 30 Min ---------- */
+    (function buildAgentCmds() {
+      const svg = document.getElementById("chart-agent-cmds");
+      renderGroupedBars(svg, {
+        x0: 230, y0: 36, width: 470, rowGap: 48, barH: 17, maxVal: 8,
+        title: "Agent environments",
+        ticks: [0, 2, 4, 6, 8].map(v => ({ v, label: `${v} min` })),
+        rows: [
+          { label: "New worktree", git: 7.1, gitText: "7.1 min", scn: 0.085, scnText: "5.1 s", mult: "\u00d784" },
+          { label: "Pull latest", git: 3.0, gitText: "3.0 min", scn: 0.15, scnText: "9.0 s", mult: "\u00d720" },
+          { label: "Commit", git: 0.3, gitText: "18 s", scn: 0.013, scnText: "761 ms", mult: "\u00d724" },
+          { label: "Status", git: 0.072, gitText: "4.3 s", scn: 0.003, scnText: "<0.2 s", mult: "\u00d720+" },
+        ]
+      });
+
+      renderGroupedBars(svg, {
+        x0: 230, y0: 306, width: 470, rowGap: 52, barH: 18, maxVal: 40,
+        title: "Total source control time per change request",
+        rightExtra: true,
+        ticks: [0, 10, 20, 30, 40].map(v => ({ v, label: `${v} min` })),
+        rows: [
+          { label: "Agent environments", git: 34, gitText: "34 min", scn: 3.7, scnText: "3.7 min", mult: "\u00d79.2", extra: "\u224811,000 agent hours a day" },
+        ]
+      });
+    })();
+
+    /* ---------- Slide 32: CI Saves 195,000 Machine Hours ---------- */
+    (function buildCiJobs() {
+      const svg = document.getElementById("chart-ci-jobs");
+      renderGroupedBars(svg, {
+        x0: 266, y0: 46, width: 450, rowGap: 68, barH: 21, maxVal: 200,
+        title: "CI and compute jobs",
+        rightExtra: true,
+        ticks: [0, 50, 100, 150, 200].map(v => ({ v, label: `${v} s` })),
+        rows: [
+          { label: "Checkout at start of compute job", git: 175, gitText: "175 s", scn: 22, scnText: "22 s", mult: "\u00d78.0", extra: "\u224885,000 machine hours a day" },
+          { label: "Checkout in a CI job", git: 31, gitText: "31 s", scn: 3.5, scnText: "3.5 s", mult: "\u00d78.8", extra: "\u2248195,000 machine hours a day" },
+        ]
+      });
+      svg.appendChild(svgEl("text", { x: 491, y: 244, "text-anchor": "middle", "font-family": "Inter, sans-serif", "font-size": 14, "font-weight": 500, fill: "#333230" }, "Median time"));
+    })();
+
+    /* ---------- Slide 33: Weekly Changes (12,257) ---------- */
+    (function buildWeeklyChanges() {
+      const svg = document.getElementById("chart-weekly-changes");
+      const L = 74, R = 1015, T = 20, B = 322;
+      const W = R - L, H = B - T;
+      const yMax = 1600;
+      const yOf = (v) => B - (v / yMax) * H;
+
+      for (let v = 0; v <= 1600; v += 200) {
+        const y = yOf(v);
+        svg.appendChild(svgEl("line", { x1: L, y1: y, x2: R, y2: y, stroke: v === 0 ? "#454440" : "#d8d6d0", "stroke-width": v === 0 ? 1.4 : 1 }));
+        svg.appendChild(svgEl("line", { x1: L - 5, y1: y, x2: L, y2: y, stroke: "#454440", "stroke-width": 1.3 }));
+        svg.appendChild(svgEl("text", { x: L - 11, y: y + 4, "text-anchor": "end", "font-family": "Inter, sans-serif", "font-size": 12.5, fill: "#333230" }, v.toLocaleString()));
+      }
+      svg.appendChild(svgEl("line", { x1: L, y1: T, x2: L, y2: B, stroke: "#454440", "stroke-width": 1.4 }));
+
+      // 33 weekly bars from Feb to late Sep matching IMG_9281
+      const weeks = [
+        [15,0],[22,0],[42,0],[35,0],[55,0],[72,0],[45,0],[68,0],[58,0],[115,0],
+        [180,0],[178,0],[170,0],[195,0],[155,0],[220,0],[200,38],[95,105],[95,165],[58,280],
+        [16,280],[8,495],[6,715],[5,705],[4,580],[4,1035],[4,190],[3,1050],[3,960],[3,935],
+        [2,975],[2,1210],[2,1612]
+      ];
+      const step = (W - 96) / weeks.length;
+      const bw = step * 0.72;
+      const xStart = L + 90;
+
+      weeks.forEach(([pr, ac], idx) => {
+        const x = xStart + idx * step;
+        const prH = (pr / yMax) * H;
+        const acH = (ac / yMax) * H;
+        if (prH > 0.5) {
+          svg.appendChild(svgEl("rect", { x, y: B - prH, width: bw, height: prH, rx: acH < 1 ? 2 : 0, fill: "#466fb5" }));
+        }
+        if (acH > 0.5) {
+          svg.appendChild(svgEl("rect", { x, y: B - prH - acH, width: bw, height: acH, rx: 2, fill: "#a3493d" }));
+        }
+      });
+
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+      months.forEach((m, idx) => {
+        const x = L + (idx / 8.55) * (W - 22);
+        svg.appendChild(svgEl("line", { x1: x, y1: B, x2: x, y2: B + 5, stroke: "#454440", "stroke-width": 1.3 }));
+        svg.appendChild(svgEl("text", { x, y: B + 23, "text-anchor": "middle", "font-family": "Inter, sans-serif", "font-size": 13, fill: "#333230" }, m));
+      });
+
+      // Top-left callout box
+      svg.appendChild(svgEl("rect", { x: 92, y: 34, width: 174, height: 56, rx: 8, fill: "#f4f3ee", stroke: "#333230", "stroke-width": 1.3 }));
+      svg.appendChild(svgEl("text", { x: 106, y: 58, "font-family": "Inter, sans-serif", "font-size": 19, "font-weight": 700, fill: "#1c1b1a" }, "12,257"));
+      svg.appendChild(svgEl("text", { x: 106, y: 78, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#333230" }, "changes since January"));
+
+      // Legend
+      const ly = 376;
+      svg.appendChild(svgEl("rect", { x: 356, y: ly - 12, width: 15, height: 15, rx: 3, fill: "#466fb5" }));
+      svg.appendChild(svgEl("text", { x: 379, y: ly, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#2c2b29" }, "Pull requests"));
+      svg.appendChild(svgEl("rect", { x: 494, y: ly - 12, width: 15, height: 15, rx: 3, fill: "#a3493d" }));
+      svg.appendChild(svgEl("text", { x: 517, y: ly, "font-family": "Inter, sans-serif", "font-size": 13.5, fill: "#2c2b29" }, "Antique change requests"));
+    })();
+
+    /* ---------- Deck Navigation, Jump Selector & Keyboard Controls ---------- */
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const counter = document.getElementById("counter");
+    const modeBtn = document.getElementById("modeBtn");
+    const jumpSelect = document.getElementById("jumpSelect");
+    let current = 0;
+
+    slides.forEach((s, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = s.dataset.label || `Slide ${i + 1}`;
+      jumpSelect.appendChild(opt);
+    });
+
+    function renderSlide(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("active", i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      jumpSelect.value = current;
+      history.replaceState(null, "", `#slide-${current + 1}`);
+      if (!document.body.classList.contains("single-mode")) {
+        slides[current].scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => renderSlide(current - 1));
+    document.getElementById("nextBtn").addEventListener("click", () => renderSlide(current + 1));
+    jumpSelect.addEventListener("change", (e) => renderSlide(parseInt(e.target.value, 10)));
+
+    modeBtn.addEventListener("click", () => {
+      const isSingle = document.body.classList.toggle("single-mode");
+      modeBtn.textContent = isSingle ? "Show All" : "Single View";
+      if (isSingle) renderSlide(current);
+      else slides[current].scrollIntoView({ behavior: "instant", block: "center" });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+        if (e.key === " " && !document.body.classList.contains("single-mode")) return;
+        e.preventDefault();
+        renderSlide(current + 1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        renderSlide(current - 1);
+      } else if (e.key === "Home") {
+        renderSlide(0);
+      } else if (e.key === "End") {
+        renderSlide(slides.length - 1);
+      }
+    });
+
+    const hashMatch = window.location.hash.match(/^#slide-(\d+)$/);
+    if (hashMatch) {
+      const idx = parseInt(hashMatch[1], 10) - 1;
+      if (idx >= 0 && idx < slides.length) renderSlide(idx);
+    }
+  </script>
 </body>
 </html>
