@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anthropic AI Factory | AI Factory (PortCon)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      background: #1b1d24;
+      color: #111318;
+      padding: 84px 18px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .top-nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+    }
+    .top-nav a {
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 650;
+      padding: 5px 12px;
+      border-radius: 999px;
+      color: #e5e7eb;
+    }
+    .top-nav a.current { background: #ffffff; color: #111318; }
+    .top-nav a:not(.current):hover { background: rgba(255, 255, 255, 0.12); }
+    .slide {
+      width: 100%;
+      max-width: 1040px;
+      background: #f7f6fb;
+      border-radius: 14px;
+      padding: 44px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #b45309; }
+    h1 { font-size: 36px; font-weight: 750; color: #0f1115; }
+    p { font-size: 15px; line-height: 1.5; color: #374151; }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" aria-label="AI Factory pages">
+    <a href="index.html">AI Factory</a>
+    <a href="uber.html">Uber</a>
+    <a href="anthropic.html" class="current">Anthropic</a>
+  </nav>
+
+  <section class="slide">
+    <div class="kicker">AI Factory · PortCon Solution · /anthropic.html</div>
+    <h1>Anthropic: The AI Factory</h1>
+    <p>Dedicated page under the root for Anthropic AI Factory slides and notes.</p>
+  </section>
+</body>
+</html>

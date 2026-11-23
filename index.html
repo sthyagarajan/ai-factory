@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Factory — Solutions &amp; PortCon Decks</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #14171f;
+      color: #f8fafc;
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .hero {
+      background: #1d222e;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 16px;
+      padding: 32px 36px;
+    }
+    .kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .lead {
+      font-size: 15px;
+      color: #cbd5e1;
+      margin-top: 10px;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    .card {
+      background: #f7f6fb;
+      color: #111318;
+      border-radius: 14px;
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    }
+    .card h2 {
+      font-size: 22px;
+      font-weight: 750;
+      color: #0f1115;
+      margin-top: 6px;
+    }
+    .card p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #374151;
+    }
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #4c1d95;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 9px 16px;
+      border-radius: 999px;
+      background: #111318;
+      color: #ffffff;
+    }
+    .btn.secondary {
+      background: #e5e7eb;
+      color: #111318;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    @media (max-width: 820px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="kicker">AI Factory · Solutions Hub</div>
+      <h1>AI Factory</h1>
+      <p class="lead">
+        Workspace and slide archive organized around AI software factory solutions, starting with <strong>PortCon</strong> (San Francisco, Nov 18, 2026) and separate pages under the root for <code>uber.html</code> and <code>anthropic.html</code>.
+      </p>
+    </section>
+
+    <div class="section-title">Solutions · PortCon</div>
+    <div class="grid-2">
+      <article class="card">
+        <div>
+          <span class="pill">PortCon Solution · /uber.html</span>
+          <h2>Uber — Tomorrow's Autonomous Factory</h2>
+          <p style="margin-top:8px;">
+            10-slide presentation covering inner-loop validation (<code>uValidate</code>), MCP simulator/emulator evidence, AI PR review with repo <code>SKILL.md</code> rules, risk-gated green lanes, self-repairing <code>main</code>, guardrails, cost governance, and automated paper-cut loops.
+          </p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="uber.html">Open Uber Slides</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div>
+          <span class="pill">PortCon Solution · /anthropic.html</span>
+          <h2>Anthropic — The AI Factory</h2>
+          <p style="margin-top:8px;">
+            Dedicated page under the root for Anthropic AI Factory slides and notes from PortCon.
+          </p>
+        </div>
+        <div class="actions">
+          <a class="btn secondary" href="anthropic.html">Open Anthropic Page</a>
+        </div>
+      </article>
+    </div>
+  </main>
+</body>
+</html>

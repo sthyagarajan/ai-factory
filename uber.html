@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uber — Autonomous Factory Slides | AI Factory (PortCon)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #1b1d24;
+      color: #111318;
+      padding: 76px 18px 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+    }
+    body.single-mode {
+      justify-content: center;
+      min-height: 100vh;
+    }
+    body.single-mode .slide { display: none; }
+    body.single-mode .slide.active { display: flex; }
+
+    .top-nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+    }
+    .top-nav a {
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 650;
+      padding: 5px 12px;
+      border-radius: 999px;
+      color: #e5e7eb;
+    }
+    .top-nav a.current { background: #ffffff; color: #111318; }
+    .top-nav a:not(.current):hover { background: rgba(255, 255, 255, 0.12); }
+
+    .slide {
+      width: 100%;
+      max-width: 1220px;
+      background: #f7f6fb;
+      color: #111318;
+      border-radius: 14px;
+      padding: 34px 40px 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+    .slide.dark {
+      background: radial-gradient(circle at 88% 12%, rgba(167, 139, 250, 0.22), transparent 36%),
+                  linear-gradient(145deg, #27292e 0%, #1d1f24 100%);
+      color: #f8fafc;
+      min-height: 580px;
+      justify-content: space-between;
+    }
+
+    .eyebrow-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #5b6170;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid #d8d5e5;
+      color: #181a20;
+    }
+    .pill.dark-pill { background: #181a20; color: #ffffff; border-color: #181a20; }
+    .pill.accent { background: #ede9fe; color: #4c1d95; border-color: #c4b5fd; }
+    .pill.good { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .pill.warn { background: #fee2e2; color: #7f1d1d; border-color: #fca5a5; }
+
+    .title-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    h1 { font-size: 38px; font-weight: 750; letter-spacing: -0.025em; line-height: 1.12; color: #0f1115; }
+    .slide.dark h1 { font-size: 56px; color: #ffffff; }
+    .subtitle-dark { font-size: 20px; color: #b8bcc8; margin-top: 10px; max-width: 560px; }
+
+    .card { background: #ffffff; border: 1px solid #e2dfee; border-radius: 12px; padding: 16px 18px; }
+    .card.tint { background: #efedf7; border-color: #dcd7ec; }
+    .card.highlight-red { background: #fff5f5; border: 1.5px solid #e11d48; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+
+    h2 { font-size: 16px; font-weight: 700; color: #111318; margin-bottom: 8px; }
+    p, li { font-size: 13px; line-height: 1.45; color: #2b2f3a; }
+    ul { padding-left: 16px; display: flex; flex-direction: column; gap: 5px; }
+
+    code, .term {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: #f1eff8;
+      border: 1px solid #ded9ee;
+      color: #1e2230;
+      padding: 1px 6px;
+      border-radius: 5px;
+    }
+    .term-dark {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: #181a22;
+      color: #e2e8f0;
+      padding: 8px 10px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .big-stat { font-size: 26px; font-weight: 750; color: #0f1115; letter-spacing: -0.02em; }
+    .big-stat span { font-size: 13px; font-weight: 600; color: #525866; margin-left: 4px; }
+
+    .slide-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #5b6170; padding-top: 6px; }
+    .slide.dark .slide-footer { color: #9ca3af; }
+
+    .stepper { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #6b7280; }
+    .stepper .active-step { background: #4338ca; color: #ffffff; padding: 4px 10px; border-radius: 999px; }
+
+    .deck-controls {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      z-index: 1000;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+    .deck-controls button {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .deck-controls button:hover { background: rgba(255, 255, 255, 0.22); }
+
+    @media (max-width: 980px) {
+      .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+      .slide { padding: 24px 20px; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body class="single-mode">
+
+  <nav class="top-nav" aria-label="AI Factory pages">
+    <a href="index.html">AI Factory</a>
+    <a href="uber.html" class="current">Uber</a>
+    <a href="anthropic.html">Anthropic</a>
+  </nav>
+
+  <!-- 1. IMG_9241 + VIDEO WALKTHROUGH -->
+  <section class="slide active" id="slide-1">
+    <div class="eyebrow-row">
+      <span class="pill dark-pill">Minion</span>
+      <span class="kicker">End-to-End Demo &amp; Evidence View · Recreation Amplified for the Stage</span>
+    </div>
+    <div class="title-row">
+      <h1>Halloween Splash — Agent &amp; Approval Flow</h1>
+      <span class="pill accent">Spec &amp; Plan &rarr; Inner Loop &rarr; Push &rarr; PR Loop &rarr; Review Loop &rarr; Approval Loop &rarr; Land</span>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h2>Workspace &amp; Session Sidebar</h2>
+        <ul>
+          <li><strong>Prototypes (Today):</strong> <code>Halloween splash</code> (Ready for handoff), <code>Empty states</code> (In progress), <code>Icon refresh</code> (Exploring).</li>
+          <li><strong>Sessions (Today):</strong> Active session for <code>Halloween splash</code> running on <code>Devpods</code>.</li>
+          <li><strong>Upcoming / Roles:</strong> Tenancy model, seasonal moments, PM, designer, mobile engineer, sessions, and agent identity.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Gates, Reviews &amp; Merge Queue</h2>
+        <ul>
+          <li><strong>Risk Gate:</strong> Launch-screen updates require human owner approval rather than automatic green-lane landing.</li>
+          <li><strong>Video Walkthrough (<code>IMG_9244.MOV</code>):</strong> <code>Minion</code> built iOS and Android PRs from one session, auto-fixed an Android startup integration test failure, addressed a screen-reader review note on iOS, went through human sign-off, rolled out across employees, a 20% holdback, and riders, and later handled theme removal via the green lane (~18 min build/checks, ~30 min rollout).</li>
+          <li><strong>Merge Queue:</strong> Both <code>Android PR</code> and <code>iOS PR</code> land together once approved.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Evidence (Device Proof · In Pilot)</h2>
+        <ul>
+          <li><strong>Pipeline:</strong> <code>MCP Gateway</code> &rarr; <code>Emulator &amp; Simulator Grid</code> driving <code>iOS simulator</code> and <code>Android emulator</code> side-by-side.</li>
+          <li><strong>Captures Saved:</strong> 4 screenshots and 1 recording comparing enabled vs. baseline splash states.</li>
+          <li><strong>PR Checklists:</strong> Both <code>iOS PR</code> and <code>Android PR</code> show unit tests, toggle behavior on device, CI, AI review, and human approval passed/approved.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Source: IMG_9241.jpg &amp; IMG_9244.MOV · Uber</span><span>1 / 10</span></div>
+  </section>
+
+  <!-- 2. IMG_9229 -->
+  <section class="slide" id="slide-2">
+    <div class="eyebrow-row">
+      <span class="kicker">Tomorrow's Autonomous Factory</span>
+      <span class="pill dark-pill">Rolling Out</span>
+      <span class="pill good">right way</span>
+      <span class="pill warn">wrong way</span>
+      <span class="pill">Illustrative data</span>
+    </div>
+    <div class="title-row"><h1>Success metrics need guardrails</h1></div>
+    <div class="grid-2">
+      <div class="card tint"><strong>Success metric</strong> &mdash; desired directional improvement across phases.</div>
+      <div class="card tint"><strong>Guardrail</strong> &mdash; quality boundary that must not regress as speed rises.</div>
+    </div>
+    <div class="grid-5">
+      <div class="card">
+        <h2>Plan</h2>
+        <p><strong>Metric:</strong> Design approval time<br /><span class="big-stat">5 days <span>-15%</span></span></p>
+        <p style="margin-top:8px;"><strong>Guardrail:</strong> Design approval rate<br /><code>90% (+2%)</code></p>
+        <p style="margin-top:8px;"><span class="pill good">The win counts</span></p>
+      </div>
+      <div class="card highlight-red">
+        <h2>Build</h2>
+        <p><strong>Metric:</strong> Agentic PRs / engineer<br /><span class="big-stat">12 <span>+30%</span></span></p>
+        <p style="margin-top:8px;"><strong>Guardrail:</strong> Revert rate<br /><code>2.4% (+35%)</code></p>
+        <p style="margin-top:8px;"><span class="pill warn">Not a win yet</span></p>
+      </div>
+      <div class="card">
+        <h2>Verify</h2>
+        <p><strong>Metric:</strong> Review to close time<br /><span class="big-stat">9 hours <span>-22%</span></span></p>
+        <p style="margin-top:8px;"><strong>Guardrail:</strong> Standard checks skipped<br /><code>1.5% (-5%)</code></p>
+        <p style="margin-top:8px;"><span class="pill good">The win counts</span></p>
+      </div>
+      <div class="card">
+        <h2>Release</h2>
+        <p><strong>Metric:</strong> Land to deploy time<br /><span class="big-stat">7 hours <span>-18%</span></span></p>
+        <p style="margin-top:8px;"><strong>Guardrail:</strong> Rollback rate<br /><code>0.6% (-4%)</code></p>
+        <p style="margin-top:8px;"><span class="pill good">The win counts</span></p>
+      </div>
+      <div class="card">
+        <h2>Observe</h2>
+        <p><strong>Metric:</strong> Time to mitigate<br /><span class="big-stat">32 min <span>-13%</span></span></p>
+        <p style="margin-top:8px;"><strong>Guardrail:</strong> Pages / on-call hour<br /><code>0.2 (flat)</code></p>
+        <p style="margin-top:8px;"><span class="pill good">The win counts</span></p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card tint"><strong>IN THE PLAYBOOK:</strong> Teams monitor their metrics across each lifecycle phase.</div>
+      <div class="card tint"><strong>COMING:</strong> End-to-end feature throughput and overall cycle time.</div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9229.jpg</span><span>2 / 10</span></div>
+  </section>
+
+  <!-- 3. IMG_9223 -->
+  <section class="slide" id="slide-3">
+    <div class="eyebrow-row"><span class="kicker">The Factory Today</span></div>
+    <h1>What infra broke at agent speed</h1>
+    <div class="grid-4">
+      <div class="card">
+        <h2>The merge queue</h2>
+        <p><span class="big-stat">10m &rarr; 3.5h</span></p>
+        <p style="margin-top:6px;">Peak wait time on Mondays surged as automated PR volume climbed.</p>
+      </div>
+      <div class="card">
+        <h2>CI load</h2>
+        <p><span class="big-stat">2&times; <span>CI jobs / yr</span></span></p>
+        <p style="margin-top:6px;">Continuous integration job volume doubled over a single year.</p>
+      </div>
+      <div class="card">
+        <h2>The review queue</h2>
+        <p><span class="big-stat">2&times; <span>median time</span></span></p>
+        <p style="margin-top:6px;">Median pull requests took roughly twice as long to land, with review wait time dominating.</p>
+      </div>
+      <div class="card">
+        <h2>Source control</h2>
+        <p><span class="big-stat">Branches</span></p>
+        <p style="margin-top:6px;">Accumulating branches against <code>main</code> made every push surface a long list of active branches.</p>
+      </div>
+    </div>
+    <div class="card tint"><strong>All of this is before we reach the next level of scale in an autonomous factory</strong></div>
+    <div class="slide-footer"><span>Uber · IMG_9223.jpg</span><span>3 / 10</span></div>
+  </section>
+
+  <!-- 4. IMG_9245 -->
+  <section class="slide" id="slide-4">
+    <div class="eyebrow-row">
+      <span class="kicker">A Factory That Improves Itself</span>
+      <span class="pill accent">The Loops: Paper cuts</span>
+      <span class="pill">Review rules</span>
+      <span class="pill">UberBench</span>
+    </div>
+    <h1>The factory files its own paper cuts</h1>
+    <div class="grid-3">
+      <div class="card">
+        <h2>1 · Capture <span class="pill">automatic · ~200/wk</span></h2>
+        <div class="term-dark">Minion session
+&gt; count weekly failed builds
+Skill(log-papercut) [untriggered by user]
+  task:     count failed builds
+  issue:    query returned truncated results
+  fallback: manually paged through results
+* Logged papercut automatically.</div>
+        <p style="margin-top:8px;">Subsequent runs benefit from the patched tool once resolved.</p>
+      </div>
+      <div class="card">
+        <h2>2 · Store <span class="pill">automatic</span></h2>
+        <ul>
+          <li><strong>Inbox stream:</strong> Truncated query results reported repeatedly; silent cutoffs flagged for human review.</li>
+          <li><strong>Clustering:</strong> Similar reports group into unified defect items and route to owners.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>3 · Triage <span class="pill accent">skill-driven</span></h2>
+        <ul>
+          <li><strong>Ticket (In Progress):</strong> Silent result truncation in query execution.</li>
+          <li><strong>Expected behavior:</strong> Full dataset or explicit warning indicator.</li>
+          <li><strong>Evidence &amp; Routing:</strong> Missing row signals routed to team queue for agent resolution until passing.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h2>4 · Fix <span class="pill">same CI, same review</span></h2>
+        <p>Patches query output handling in <code>query/run.py</code> so callers know when results are capped rather than silently losing rows.</p>
+      </div>
+      <div class="card">
+        <h2>5 · Verify <span class="pill good">Works today</span></h2>
+        <p>Replaying reproduction cases moves pass rate from <code>0 of 3</code> before the fix to <code>3 of 3</code> after the fix.</p>
+      </div>
+      <div class="card tint">
+        <h2>What We Learned</h2>
+        <p>Agents can overfit narrowly to a single test case&mdash;review patches for the underlying general rule.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9245.jpg</span><span>4 / 10</span></div>
+  </section>
+
+  <!-- 5. IMG_9230 -->
+  <section class="slide" id="slide-5">
+    <div class="eyebrow-row"><span class="kicker">Tomorrow's Autonomous Factory</span><span class="pill">Budgets</span></div>
+    <h1>Cost governance</h1>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Interactive</h2>
+        <p>Engineers choose the model and agent (<code>$</code> / <code>$$</code> / <code>$$$</code> tiers) with budget enforcement handled by <code>Model Gateway</code>.</p>
+      </div>
+      <div class="card">
+        <h2>Managed factory</h2>
+        <p>Selects cost-effective models via <code>UberBench</code> across tiers, requiring manager approval to step up to higher cost tiers.</p>
+      </div>
+    </div>
+    <div class="card tint" style="text-align:center;">
+      <strong>Experimentation</strong> (budgeted exploration) &larr; <em>the conversation we want people to have</em> &rarr; <strong>Accountability</strong> (work you stand behind)
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Make tokens go further</h2>
+        <ul>
+          <li>Execute tool calls via code mode where appropriate.</li>
+          <li>Use self-compacting context windows to keep prompts lean.</li>
+          <li>Extend prompt/context cache lifetimes for repeated context reuse.</li>
+          <li>Bake sensible defaults into the harness instead of manual per-run tuning.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Cultural side effects (offset intentionally)</h2>
+        <ul>
+          <li>Engineers may hold back valuable work to avoid asking for additional quota.</li>
+          <li>Articulating the value of work becomes an explicit habit.</li>
+          <li><strong>Exploring:</strong> Dedicated budgets for top models, circuit breakers for runaway sessions, and written justification for higher-tier approvals.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9230.jpg</span><span>5 / 10</span></div>
+  </section>
+
+  <!-- 6. IMG_9237 -->
+  <section class="slide" id="slide-6">
+    <div class="eyebrow-row"><span class="kicker">Inside the Factory Loops</span><span class="pill dark-pill">Rolling out</span></div>
+    <div class="title-row">
+      <h1>A green lane for low-risk changes</h1>
+      <div class="stepper"><span>1</span><span>2</span><span>3</span><span class="active-step">4 Approval loop</span><span>5</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Automated Check &amp; Commit-Bound Stamp</h2>
+        <ul>
+          <li><strong>Example:</strong> Replacing a deprecated logging call on commit <code>a3f9c21</code>.</li>
+          <li><strong>Required Signals:</strong> No high-risk AI review findings, passing CI (build, lint, tests), clean security scan, low risk/blast radius, team path policy match, and re-verification right before approval.</li>
+          <li><strong>Bot Stamp:</strong> Automated approval applies strictly to that exact commit SHA.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Green Lane vs. Human Review</h2>
+        <ul>
+          <li><strong>Risk-Gated Landing (Early Adopters):</strong> Low-risk PRs with all checks green receive an automated stamp and enter the merge queue.</li>
+          <li><strong>Human Review Path:</strong> High-risk changes, unresolved findings, or human-only paths continue to require person-in-the-loop review.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card"><p><span class="big-stat">~100</span></p><p>Enrolled projects participating in risk-gated landing.</p></div>
+      <div class="card"><p><span class="big-stat">~40%</span></p><p>Share of changes across enrolled projects landing via the green lane.</p></div>
+      <div class="card tint">
+        <h2>What We Learned</h2>
+        <ul>
+          <li>Teams prefer configurable risk thresholds so high-risk items are flagged while routine changes flow smoothly.</li>
+          <li>Engineers and agents expect fast verdicts measured in minutes.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9237.jpg</span><span>6 / 10</span></div>
+  </section>
+
+  <!-- 7. IMG_9235 -->
+  <section class="slide" id="slide-7">
+    <div class="eyebrow-row"><span class="kicker">Inside the Factory Loops</span></div>
+    <div class="title-row">
+      <h1>What AI review looks like on a PR</h1>
+      <div class="stepper"><span>1</span><span>2</span><span class="active-step">3 Review loop</span><span>4</span><span>5</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>PR Diff &amp; Severity-First Comments</h2>
+        <ul>
+          <li><strong>Scoped to Changed Lines:</strong> Focuses on modified code (such as <code>pricing/quote.go</code>) with direct links back to the agent run trace.</li>
+          <li><strong>High Severity Example:</strong> Warns against overwriting an existing promo value with an empty result on lookup failure.</li>
+          <li><strong>Medium Severity Example:</strong> Flags using floating-point arithmetic for monetary totals where rounding drift can occur; recommends a dedicated money type.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Review Detail &amp; Repo-Defined Team Skills</h2>
+        <ul>
+          <li><strong>Run Summary:</strong> Completed review surfacing 3 findings in ~2m 40s with log access and source attribution (general review, AI linter, or team skill).</li>
+          <li><strong>Team Skills (<code>SKILL.md</code>):</strong> Teams encode domain rules directly in their repository (such as avoiding floats for currency and logging price adjustments).</li>
+          <li><strong>What We Learned:</strong> Over-arguing arbitrary confidence scores erodes trust when a high-confidence comment is wrong; transparent traces and comments support systematic tuning.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9235.jpg</span><span>7 / 10</span></div>
+  </section>
+
+  <!-- 8. IMG_9233 -->
+  <section class="slide" id="slide-8">
+    <div class="eyebrow-row"><span class="kicker">Inside the Factory Loops</span></div>
+    <div class="title-row">
+      <h1>The inner loop, the fastest feedback</h1>
+      <div class="stepper"><span class="active-step">1 Inner loop</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Before Push &mdash; Fast Checks, Fixed on the Spot</h2>
+        <p><code>Minion</code> runs <code>uValidate</code> (<code>aifx validate --fix</code>) to catch and auto-fix fast issues locally before pushing.</p>
+        <ul style="margin-top:8px;">
+          <li><strong>Language Coverage:</strong> Go (lint, tests, coverage, build files), Web (lint, typecheck, tests, coverage), Java, Android, iOS, Python, plus custom team commands.</li>
+          <li><strong>On the Horizon:</strong> Mutation testing (in progress), TLA+ state machines, and formal/Lean proofs (exploring).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>After Push &mdash; PR Loop Confirms Once</h2>
+        <ul>
+          <li><strong>Fewer Redundant CI Runs:</strong> Shifting fast checks left reduced a sample PR from multiple separate CI cycles down to a single confirmation pass.</li>
+          <li><strong>Early Monorepo Impact:</strong> ~20% fewer CI runs per PR and CI failure rate reduced from <code>35%</code> to <code>25%</code>.</li>
+          <li><strong>Heavy Suites Stay in CI:</strong> Full builds, library builds, and comprehensive test suites remain in post-push CI.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9233.jpg</span><span>8 / 10</span></div>
+  </section>
+
+  <!-- 9. IMG_9238 -->
+  <section class="slide" id="slide-9">
+    <div class="eyebrow-row"><span class="kicker">Inside the Factory Loops</span><span class="pill accent">In progress</span></div>
+    <div class="title-row">
+      <h1>Main that repairs itself</h1>
+      <div class="stepper"><span>1</span><span>2</span><span>3</span><span>4</span><span class="active-step">5 Merge loop</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h2>Traffic Shaping &amp; Verified Main</h2>
+        <ul>
+          <li><strong>Peak Traffic Rules:</strong> Very large PRs wait until peak load subsides so fast changes keep moving.</li>
+          <li><strong>Self-Repairing Sequence:</strong> PRs pass quick checks to land on <code>main</code>, while batched full checks run asynchronously; failures trigger auto-fix or revert.</li>
+          <li><strong>Deployment Gate:</strong> <code>verified main</code> advances as intermediate commits pass full checks, and production deploys only from <code>verified main</code>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Lessons &amp; Reference Links</h2>
+        <ul>
+          <li>Queues designed for human cadence bottleneck under agent throughput.</li>
+          <li>Shape peak traffic before overhauling queue mechanics, and build reusable fixers across loops.</li>
+          <li><strong>Talk &amp; Repo:</strong> Full talk video on YouTube (<code>youtu.be/hX140a5klW0</code>) and open-source submit queue at <code>github.com/uber/submitqueue</code>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span>Uber · IMG_9238.jpg</span><span>9 / 10</span></div>
+  </section>
+
+  <!-- 10. IMG_9249 -->
+  <section class="slide dark" id="slide-10">
+    <div>
+      <div class="eyebrow-row"><span class="kicker" style="color:#cbd5e1;">Uber · PortCon SF · Closing Slide</span></div>
+      <h1>Don't panic.</h1>
+      <p class="subtitle-dark">Factory engineering is the new craft.</p>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;">
+      <p style="color:#cbd5e1; max-width:680px; font-size:14px;">
+        Closing visual features a white factory-gear shield outline with a blue center square on a dark charcoal canvas, paired with subtle purple/light accent bars in the upper-right corner.
+      </p>
+      <svg width="110" height="110" viewBox="0 0 120 120" role="img" aria-label="Factory shield emblem">
+        <path d="M24 44 L24 26 L48 40 L48 26 L72 40 L72 26 L96 44 L96 68 C96 89 78 102 60 108 C42 102 24 89 24 68 Z" fill="none" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" />
+        <rect x="48" y="56" width="24" height="24" rx="4" fill="#2563eb" />
+      </svg>
+    </div>
+    <div class="slide-footer"><span>Source: IMG_9249.jpg · Uber</span><span>10 / 10</span></div>
+  </section>
+
+  <div class="deck-controls" aria-label="Slide navigation">
+    <button id="prevBtn" type="button">&larr; Prev</button>
+    <span id="counter">Slide 1 of 10</span>
+    <button id="nextBtn" type="button">Next &rarr;</button>
+    <button id="modeBtn" type="button">Show All Slides</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const counter = document.getElementById("counter");
+    const modeBtn = document.getElementById("modeBtn");
+    let current = 0;
+
+    function renderSlide(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("active", i === current));
+      counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+      history.replaceState(null, "", `#slide-${current + 1}`);
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => renderSlide(current - 1));
+    document.getElementById("nextBtn").addEventListener("click", () => renderSlide(current + 1));
+
+    modeBtn.addEventListener("click", () => {
+      const isSingle = document.body.classList.toggle("single-mode");
+      modeBtn.textContent = isSingle ? "Show All Slides" : "Single Slide View";
+      if (isSingle) renderSlide(current);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "PageDown") renderSlide(current + 1);
+      if (e.key === "ArrowLeft" || e.key === "PageUp") renderSlide(current - 1);
+    });
+
+    const hashMatch = window.location.hash.match(/^#slide-(\d+)$/);
+    if (hashMatch) {
+      const idx = parseInt(hashMatch[1], 10) - 1;
+      if (idx >= 0 && idx < slides.length) renderSlide(idx);
+    }
+  </script>
+</body>
+</html>
